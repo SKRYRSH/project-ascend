@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#050505"/>
+  <rect x="4" y="4" width="504" height="504" fill="none" stroke="#cc0000" stroke-width="8"/>
+  <text x="256" y="320" font-family="Arial Black,sans-serif" font-size="280" font-weight="900" fill="#cc0000" text-anchor="middle">A</text>
+  <text x="256" y="440" font-family="Arial Narrow,sans-serif" font-size="52" font-weight="700" fill="#e8dcc8" text-anchor="middle" letter-spacing="12">ASCEND</text>
+</svg>

@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#050505">
+<title>PROJECT ASCEND</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Crimson+Text:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050505;
+  --panel:#0d0d0d;
+  --panel2:#141414;
+  --border:#222;
+  --border2:#2e2e2e;
+  --cream:#e8dcc8;
+  --cream2:#a89880;
+  --red:#cc0000;
+  --red2:#990000;
+  --red3:#3d0000;
+  --muted:#444;
+  --green:#2d5a27;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--cream);font-family:'Oswald',system-ui,sans-serif;overflow:hidden}
+
+/* manga dot texture on body */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.016) 1px,transparent 1px),
+                   radial-gradient(circle,rgba(255,255,255,.008) 1px,transparent 1px);
+  background-size:18px 18px,9px 9px;
+  background-position:0 0,4.5px 4.5px;
+}
+
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;position:relative;z-index:1}
+
+/* ── screens ── */
+.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:68px}
+.screen.active{display:block}
+.screen::-webkit-scrollbar{width:2px}
+.screen::-webkit-scrollbar-thumb{background:var(--red2)}
+
+/* ── screen header ── */
+.sh{
+  position:sticky;top:0;z-index:20;
+  padding:13px 16px 10px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border2);
+}
+.sh-sub{font-size:8px;letter-spacing:5px;color:var(--red);text-transform:uppercase;margin-bottom:1px}
+.sh-title{font-size:22px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+
+/* ── manga panel cards ── */
+.panel{
+  margin:10px 14px;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--red);
+  padding:14px;
+  position:relative;overflow:hidden;
+}
+/* halftone dots inside panels */
+.panel::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(255,255,255,.012) 1px,transparent 1px);
+  background-size:6px 6px;
+}
+.plabel{
+  font-size:7px;letter-spacing:4px;color:var(--red);text-transform:uppercase;
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.plabel::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* ── stat bars ── */
+.stat{margin-bottom:11px}
+.stat:last-child{margin-bottom:0}
+.stat-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.stat-name{font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.stat-val{font-size:14px;font-weight:700}
+.stat-val em{color:var(--muted);font-style:normal;font-weight:400;font-size:11px}
+.bar{height:3px;background:var(--border2);overflow:hidden}
+.bf{height:100%;background:var(--red);transition:width .35s ease}
+.bf.done{background:#3d7a38}
+
+/* ── streak hero ── */
+.streak-hero{
+  padding:20px 16px;display:flex;align-items:center;gap:18px;
+  border-bottom:1px solid var(--border2);position:relative;overflow:hidden;
+}
+/* speed lines behind streak number */
+.streak-hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-conic-gradient(
+    from 0deg at 22% 50%,
+    transparent 0deg,transparent 7deg,
+    rgba(204,0,0,.05) 7deg,rgba(204,0,0,.05) 8deg
+  );
+}
+.streak-num{
+  font-size:88px;font-weight:700;color:var(--red);line-height:1;
+  text-shadow:0 0 40px rgba(204,0,0,.5);position:relative;flex-shrink:0;
+}
+.streak-right{position:relative}
+.streak-label{font-size:7px;letter-spacing:5px;color:var(--muted);text-transform:uppercase}
+.streak-mood{font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:3px;line-height:1.3}
+.streak-since{font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:1px}
+
+/* ── today workout tile ── */
+.tw{
+  margin:10px 14px;padding:14px 16px;
+  background:var(--red3);border:1px solid var(--red2);
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;position:relative;overflow:hidden;
+}
+/* diagonal stripe texture */
+.tw::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(
+    -45deg,transparent,transparent 12px,
+    rgba(204,0,0,.04) 12px,rgba(204,0,0,.04) 13px
+  );
+}
+.tw-lbl{font-size:7px;letter-spacing:5px;color:rgba(200,80,80,.7);text-transform:uppercase;margin-bottom:3px}
+.tw-name{font-size:24px;font-weight:700;letter-spacing:4px;text-transform:uppercase;line-height:1}
+.tw-sub{font-size:9px;color:rgba(232,220,200,.4);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.tw-arrow{font-size:22px;color:var(--red);position:relative;transition:transform .2s}
+
+/* ── meal quick buttons ── */
+.meal-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.meal-btn{
+  padding:11px 10px;background:var(--panel2);
+  border:1px solid var(--border2);color:var(--cream);
+  font-family:'Oswald',sans-serif;text-align:left;
+  cursor:pointer;position:relative;overflow:hidden;transition:border-color .15s;
+}
+.meal-btn.on{border-color:var(--red);background:var(--red3)}
+.meal-btn.on .mb-check{opacity:1}
+.mb-check{
+  position:absolute;top:8px;right:8px;
+  font-size:12px;color:var(--red);font-weight:700;opacity:0;transition:opacity .15s;
+}
+.mb-name{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;display:block}
+.mb-cal{font-size:9px;color:var(--muted);display:block;margin-top:2px}
+
+/* ── checklist ── */
+.ci{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;
+}
+.ci:last-child{border-bottom:none}
+.cbox{
+  width:19px;height:19px;border:1px solid var(--border2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.cbox.on{background:var(--red);border-color:var(--red)}
+.cbox.on::after{content:'✕';font-size:10px;color:#fff;font-weight:700}
+.clabel{font-size:11px;letter-spacing:1px;text-transform:uppercase}
+
+/* ── quote card ── */
+.qcard{
+  margin:10px 14px;padding:20px 16px 16px;
+  background:var(--panel);border:1px solid var(--border2);
+  position:relative;overflow:hidden;
+}
+.qcard::before{
+  content:'\201C';position:absolute;top:-8px;left:10px;
+  font-family:'Crimson Text',serif;font-size:100px;color:var(--red3);
+  line-height:1;pointer-events:none;
+}
+.qcard::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(255,255,255,.01) 1px,transparent 1px);
+  background-size:6px 6px;
+}
+.qtext{
+  font-family:'Crimson Text',serif;font-style:italic;
+  font-size:16px;line-height:1.7;color:var(--cream);
+  padding-left:6px;padding-top:14px;position:relative;z-index:1;
+}
+.qfrom{
+  font-size:8px;letter-spacing:4px;color:var(--red);text-align:right;
+  margin-top:12px;text-transform:uppercase;position:relative;z-index:1;
+}
+
+/* ── counter row ── */
+.ctr{display:flex;gap:7px;margin-top:8px}
+.ctr-btn{
+  height:38px;padding:0 12px;background:var(--panel2);
+  border:1px solid var(--border2);color:var(--cream);
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;
+  cursor:pointer;white-space:nowrap;transition:border-color .15s;
+}
+.ctr-btn.primary{background:var(--red);border-color:var(--red);flex:1}
+.ctr-btn:active{opacity:.7}
+
+/* ── workout exercises ── */
+.ex{padding:13px 0;border-bottom:1px solid var(--border)}
+.ex:last-child{border-bottom:none}
+.ex-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.ex-name{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.ex-scheme{font-size:10px;color:var(--red);letter-spacing:1px}
+.sets-row{display:flex;gap:5px;flex-wrap:wrap}
+.set-dot{
+  width:36px;height:36px;
+  border:1px solid var(--border2);background:transparent;
+  color:var(--muted);font-family:'Oswald',sans-serif;
+  font-size:9px;letter-spacing:.5px;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.set-dot.on{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ── meal rows (eat screen) ── */
+.mrow{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;
+}
+.mrow:last-child{border-bottom:none}
+.mcheck{
+  width:21px;height:21px;border:1px solid var(--border2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.mcheck.on{background:var(--red);border-color:var(--red)}
+.mcheck.on::after{content:'✓';font-size:11px;color:#fff;font-weight:700}
+.minfo{flex:1}
+.mtitle{font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.mdetail{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.4}
+.mnums{text-align:right;flex-shrink:0}
+.mcal{font-size:15px;font-weight:700}
+.mpro{font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:1px}
+
+/* ── progress tiles ── */
+.tgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:0}
+.tile{
+  padding:12px 6px;text-align:center;
+  background:var(--panel2);border:1px solid var(--border2);
+}
+.tile-v{font-size:20px;font-weight:700}
+.tile-l{font-size:7px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:3px}
+.tile-s{font-size:8px;color:var(--red);margin-top:1px}
+
+/* ── input row ── */
+.inrow{display:flex;gap:7px;margin-top:10px}
+.inrow input{
+  flex:1;height:40px;background:var(--panel2);border:1px solid var(--border2);
+  color:var(--cream);font-family:'Oswald',sans-serif;font-size:17px;
+  padding:0 10px;text-align:center;
+}
+.inrow input:focus{outline:none;border-color:var(--red)}
+.inrow button{
+  height:40px;padding:0 14px;background:var(--red);border:none;color:#fff;
+  font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;white-space:nowrap;
+}
+
+/* ── motivation wall ── */
+.wq{padding:20px 16px;border-bottom:1px solid var(--border);position:relative}
+.wq::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--border2)}
+.wq:nth-child(3n+1)::before{background:var(--red)}
+.wq:nth-child(3n+2)::before{background:var(--red2)}
+.wqt{font-family:'Crimson Text',serif;font-style:italic;font-size:16px;line-height:1.7;color:var(--cream)}
+.wqf{font-size:7px;letter-spacing:4px;color:var(--red);text-transform:uppercase;margin-top:10px}
+
+/* ── buttons ── */
+.btn{
+  display:block;width:100%;padding:13px;
+  background:transparent;border:1px solid var(--red);
+  color:var(--red);font-family:'Oswald',sans-serif;
+  font-size:11px;font-weight:600;letter-spacing:4px;
+  text-transform:uppercase;cursor:pointer;transition:all .2s;
+}
+.btn.on{background:var(--red);color:#fff}
+.btn.done{background:var(--red2);border-color:var(--red2);color:#fff}
+
+/* ── rest day ── */
+.rest-block{text-align:center;padding:50px 20px}
+.rest-big{font-size:64px;font-weight:700;color:var(--border2);letter-spacing:8px}
+.rest-sub{font-size:8px;letter-spacing:5px;color:var(--muted);margin-top:8px;text-transform:uppercase}
+.rest-quote{
+  margin:40px 16px 0;padding:18px 14px;
+  border:1px solid var(--border2);border-left:3px solid var(--red2);
+  font-family:'Crimson Text',serif;font-style:italic;
+  font-size:15px;line-height:1.7;color:var(--cream2);
+}
+
+/* ── bottom nav ── */
+#nav{
+  position:fixed;bottom:0;left:0;right:0;height:60px;
+  background:var(--bg);border-top:1px solid var(--border2);
+  display:flex;z-index:100;
+}
+.nb{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px;
+  border:none;background:none;color:var(--muted);
+  font-family:'Oswald',sans-serif;font-size:7px;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;transition:color .15s;padding:0;
+}
+.nb.on{color:var(--red)}
+.ni{font-size:16px;line-height:1}
+
+/* ── toast ── */
+#toast{
+  position:fixed;bottom:70px;left:50%;transform:translateX(-50%);
+  background:var(--red);color:#fff;
+  padding:8px 16px;
+  font-size:8px;letter-spacing:3px;text-transform:uppercase;
+  opacity:0;transition:opacity .25s;pointer-events:none;
+  white-space:nowrap;z-index:300;
+}
+#toast.show{opacity:1}
+
+/* ── splash ── */
+#splash{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:500;transition:opacity .7s .2s;
+}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-eyebrow{font-size:8px;letter-spacing:7px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.sp-title{font-size:44px;font-weight:700;letter-spacing:8px;text-transform:uppercase;line-height:1}
+.sp-line{width:50px;height:2px;background:var(--red);margin:18px auto}
+.sp-sub{font-size:8px;letter-spacing:5px;color:var(--muted);text-transform:uppercase}
+/* speed lines on splash */
+.sp-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,transparent 10deg,
+    rgba(204,0,0,.025) 10deg,rgba(204,0,0,.025) 11deg
+  );
+}
+
+/* chart */
+.chart-svg{width:100%;height:90px;display:block;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-lines"></div>
+  <div style="text-align:center;position:relative;z-index:1">
+    <div class="sp-eyebrow">The War Journal</div>
+    <div class="sp-title">PROJECT<br>ASCEND</div>
+    <div class="sp-line"></div>
+    <div class="sp-sub">Sahil · Day <span id="splash-day">1</span> of Transformation</div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="s-home" class="screen active"></div>
+  <div id="s-train" class="screen"></div>
+  <div id="s-eat" class="screen"></div>
+  <div id="s-progress" class="screen"></div>
+  <div id="s-wall" class="screen"></div>
+
+  <nav id="nav">
+    <button class="nb on" data-tab="home" onclick="switchTab('home')"><span class="ni">⌂</span>HOME</button>
+    <button class="nb" data-tab="train" onclick="switchTab('train')"><span class="ni">⚔</span>TRAIN</button>
+    <button class="nb" data-tab="eat" onclick="switchTab('eat')"><span class="ni">◈</span>EAT</button>
+    <button class="nb" data-tab="progress" onclick="switchTab('progress')"><span class="ni">◉</span>PROGRESS</button>
+    <button class="nb" data-tab="wall" onclick="switchTab('wall')"><span class="ni">✦</span>WALL</button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── SERVICE WORKER ──────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+// ─── CONSTANTS ───────────────────────────────────────────────
+const START = '2026-04-11';
+const TGT = { cal: 1850, pro: 140, steps: 10000, water: 12, sleep: 7 };
+const SCHEDULE = ['push', 'pull', 'walk', 'push', 'pullcore', 'rest', 'rest'];
+
+const WK = {
+  push: {
+    name: 'PUSH', sub: 'Chest · Shoulders · Triceps',
+    ex: [
+      { n: 'Incline DB Press',           s: 4, r: '10' },
+      { n: 'Cable Chest Fly',            s: 3, r: '12' },
+      { n: 'Shoulder Press Machine',     s: 3, r: '10' },
+      { n: 'Lateral Raises + Drop Set',  s: 3, r: '12' },
+      { n: 'Tricep Pushdown',            s: 3, r: '12' }
+    ]
+  },
+  pull: {
+    name: 'PULL', sub: 'Back · Biceps',
+    ex: [
+      { n: 'Weighted Pull-ups',     s: 5, r: 'MAX' },
+      { n: 'Wide Lat Pulldown',     s: 4, r: '10' },
+      { n: 'Cable Rows',            s: 3, r: '12' },
+      { n: 'Single Arm DB Row',     s: 3, r: '12 each' },
+      { n: 'Face Pulls',            s: 3, r: '15' }
+    ]
+  },
+  walk: {
+    name: 'WALK + CORE', sub: '10,000 Steps · Abs',
+    ex: [
+      { n: 'Hanging Leg Raises', s: 4, r: '15' },
+      { n: 'Cable Crunches',     s: 3, r: '15' },
+      { n: 'Plank',              s: 3, r: '60s' }
+    ]
+  },
+  pullcore: {
+    name: 'PULL + CORE', sub: 'Back · Biceps · Abs',
+    ex: [
+      { n: 'Pull-ups',              s: 5, r: 'MAX' },
+      { n: 'Lat Pulldown',          s: 3, r: '10' },
+      { n: 'DB Rows',               s: 3, r: '12' },
+      { n: 'Hanging Knee Raises',   s: 3, r: '15' },
+      { n: 'Plank Variations',      s: 3, r: '45s' }
+    ]
+  },
+  rest: { name: 'REST', sub: 'Walk · Recover · Sleep', ex: [] }
+};
+
+const MEALS = [
+  { id: 0, name: 'BREAKFAST', detail: '4 boiled eggs · banana · black chai',    cal: 330, pro: 28 },
+  { id: 1, name: 'LUNCH',     detail: 'Dal · 2 rotis · sabzi',                  cal: 500, pro: 20 },
+  { id: 2, name: 'SNACK',     detail: '200g plain dahi · 30g peanuts',           cal: 250, pro: 14 },
+  { id: 3, name: 'DINNER',    detail: '200g chicken · rice or 2 rotis',          cal: 580, pro: 46 }
+];
+
+const QUOTES = [
+  { t: "If you're always worried about crushing the ants beneath your feet... you couldn't walk. Could you?", f: "GUTS — BERSERK" },
+  { t: "A dream... It's something you do for yourself, not for others.", f: "GUTS — BERSERK" },
+  { t: "If it means risking my life, I will claw my way through.", f: "GUTS — BERSERK" },
+  { t: "Struggle for your life, or die in place.", f: "GUTS — BERSERK" },
+  { t: "Even if we painstakingly piece together something lost, it doesn't mean things will ever go back to how they were.", f: "GUTS — BERSERK" },
+  { t: "There is no such thing as a painless lesson. They just don't exist.", f: "GUTS — BERSERK" },
+  { t: "No matter how hard or impossible it is, never lose sight of your goal.", f: "GUTS — BERSERK" },
+  { t: "I have no enemies. No one does. There is no one that it is okay to hurt.", f: "THORFINN — VINLAND SAGA" },
+  { t: "A real warrior doesn't need a sword.", f: "THORFINN — VINLAND SAGA" },
+  { t: "Live. Keep moving forward. That is all.", f: "THORFINN — VINLAND SAGA" },
+  { t: "I was weak. And because I was weak, I hurt the people around me. I will never stop regretting that.", f: "THORFINN — VINLAND SAGA" },
+  { t: "Under the vast sky, I realized — there is nothing I cannot achieve.", f: "MUSASHI — VAGABOND" },
+  { t: "The only thing I can do is keep moving forward. No matter what gets in my way.", f: "MUSASHI — VAGABOND" },
+  { t: "I am still immature. That is why I swing the sword.", f: "MUSASHI — VAGABOND" },
+  { t: "To know yourself is to know the enemy. Know yourself, and you need not fear battle.", f: "MUSASHI — VAGABOND" }
+];
+
+// ─── DATA ────────────────────────────────────────────────────
+const KEY = 'ascend_v1';
+let D;
+
+function load() {
+  const r = localStorage.getItem(KEY);
+  D = r ? JSON.parse(r) : { weights: [{ d: START, v: 84 }], waists: [], entries: {} };
+}
+
+function save() { localStorage.setItem(KEY, JSON.stringify(D)); }
+
+function td() { return new Date().toISOString().slice(0, 10); }
+
+function entry(date) {
+  const k = date || td();
+  if (!D.entries[k]) {
+    D.entries[k] = {
+      meals: [false, false, false, false],
+      workout: false,
+      sets: {}, // key: `${wkKey}_${exIdx}` → count
+      steps: 0, water: 0, sleep: 0,
+      cl: { am: false, pm: false, noliq: false, supps: false }
+    };
+    save();
+  }
+  return D.entries[k];
+}
+
+function dayN(date) {
+  const s = new Date(START + 'T00:00:00');
+  const d = new Date((date || td()) + 'T00:00:00');
+  return Math.floor((d - s) / 86400000) + 1;
+}
+
+function wkKey() { return SCHEDULE[(dayN() - 1) % 7]; }
+
+function streak() {
+  let s = 0, d = new Date(td() + 'T00:00:00');
+  for (let i = 0; i < 2000; i++) {
+    const k = d.toISOString().slice(0, 10);
+    const e = D.entries[k];
+    if (!e || (!e.meals.some(Boolean) && !e.workout)) break;
+    s++; d.setDate(d.getDate() - 1);
+  }
+  return s;
+}
+
+function macros() {
+  const e = entry(); let cal = 0, pro = 0;
+  MEALS.forEach((m, i) => { if (e.meals[i]) { cal += m.cal; pro += m.pro; } });
+  return { cal, pro };
+}
+
+function quote() { return QUOTES[(dayN() - 1) % QUOTES.length]; }
+function pct(v, t) { return Math.min(100, Math.round(v / t * 100)); }
+function fmtDate(d) {
+  return new Date(d + 'T00:00:00')
+    .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    .toUpperCase();
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+let _tt;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ─── TABS ────────────────────────────────────────────────────
+let activeTab = 'home';
+function switchTab(id) {
+  activeTab = id;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(n => n.classList.remove('on'));
+  document.getElementById('s-' + id).classList.add('active');
+  document.querySelector('[data-tab="' + id + '"]').classList.add('on');
+  render();
+}
+function render() {
+  ({ home: rHome, train: rTrain, eat: rEat, progress: rProgress, wall: rWall })[activeTab]();
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────
+function bar(label, val, target, unit) {
+  const p = pct(val, target), done = val >= target;
+  return `<div class="stat">
+    <div class="stat-hd">
+      <span class="stat-name">${label}</span>
+      <span class="stat-val">${val}<em> / ${target}${unit}</em></span>
+    </div>
+    <div class="bar"><div class="bf${done ? ' done' : ''}" style="width:${p}%"></div></div>
+  </div>`;
+}
+
+function streakMood(s) {
+  if (s === 0) return 'The war begins.';
+  if (s === 1) return 'Day one. Always day one.';
+  if (s < 4)  return 'The blade is being sharpened.';
+  if (s < 7)  return 'You are building something real.';
+  if (s < 14) return 'One week. Unshaken.';
+  if (s < 30) return 'The body is changing.';
+  if (s < 60) return 'A month of war. Legendary.';
+  return 'You are a different person now.';
+}
+
+// ─── HOME ────────────────────────────────────────────────────
+function rHome() {
+  const e = entry(), m = macros(), s = streak(), dn = dayN();
+  const wk = wkKey(), wkd = WK[wk], q = quote();
+  const cl = [
+    { k: 'am',    label: 'Skincare AM (wash + niacinamide + SPF)' },
+    { k: 'pm',    label: 'Skincare PM (wash + retinol + moisturiser)' },
+    { k: 'noliq', label: 'Zero liquid calories' },
+    { k: 'supps', label: 'Supplements / protein powder' }
+  ];
+  const clDone = Object.values(e.cl).filter(Boolean).length;
+
+  document.getElementById('s-home').innerHTML = `
+    <div class="sh">
+      <div class="sh-sub">Project Ascend · Day ${dn}</div>
+      <div class="sh-title">${fmtDate(td())}</div>
+    </div>
+
+    <div class="streak-hero">
+      <div class="streak-num">${s}</div>
+      <div class="streak-right">
+        <div class="streak-label">Day Streak</div>
+        <div class="streak-mood">${streakMood(s)}</div>
+        <div class="streak-since">${fmtDate(START)} → NOW</div>
+      </div>
+    </div>
+
+    <div class="tw" onclick="switchTab('train')">
+      <div>
+        <div class="tw-lbl">Today's Chapter</div>
+        <div class="tw-name">${wkd.name}</div>
+        <div class="tw-sub">${wkd.sub}</div>
+      </div>
+      <div class="tw-arrow">${e.workout ? '✓' : '→'}</div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Nutrition</div>
+      ${bar('Calories', m.cal, TGT.cal, ' kcal')}
+      ${bar('Protein', m.pro, TGT.pro, 'g')}
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Quick Log Meals</div>
+      <div class="meal-grid">
+        ${MEALS.map(ml => `
+          <button class="meal-btn${e.meals[ml.id] ? ' on' : ''}" onclick="togMeal(${ml.id})">
+            <span class="mb-check">✓</span>
+            <span class="mb-name">${ml.name}</span>
+            <span class="mb-cal">${ml.cal} kcal · ${ml.pro}g</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Movement</div>
+      ${bar('Steps', e.steps, TGT.steps, '')}
+      <div class="ctr">
+        <button class="ctr-btn" onclick="adj('steps',-500)">−500</button>
+        <button class="ctr-btn primary" onclick="adj('steps',1000)">+1000 steps</button>
+        <button class="ctr-btn" onclick="adj('steps',500)">+500</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Hydration</div>
+      ${bar('Water', e.water, TGT.water, ' glasses')}
+      <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:3px">${e.water} × 250ml = ${(e.water * 0.25).toFixed(2)}L</div>
+      <div class="ctr">
+        <button class="ctr-btn" onclick="adj('water',-1)">−1</button>
+        <button class="ctr-btn primary" onclick="adj('water',1)">+1 glass (250ml)</button>
+        <button class="ctr-btn" onclick="adj('water',2)">+2</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Sleep Last Night</div>
+      ${bar('Sleep', e.sleep, TGT.sleep, 'h')}
+      <div style="margin-top:3px;font-size:9px;color:${e.sleep >= 7 ? '#3d7a38' : e.sleep >= 5 ? 'var(--cream2)' : 'var(--red)'};letter-spacing:1px">
+        ${e.sleep >= 7 ? '✓ Dark circles fading. Skin recovering.' : e.sleep >= 5 ? '⚠ Below target. Push to 7h.' : e.sleep > 0 ? '✕ Sleep debt. Face + fat loss both suffer.' : 'Log how many hours you slept.'}
+      </div>
+      <div class="ctr" style="margin-top:8px">
+        <button class="ctr-btn" onclick="adj('sleep',-0.5)">−½h</button>
+        <button class="ctr-btn primary" onclick="adj('sleep',0.5)">+½ hour</button>
+        <button class="ctr-btn" onclick="adj('sleep',1)">+1h</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Daily Checklist (${clDone}/4)</div>
+      ${cl.map(ci => `
+        <div class="ci" onclick="togCl('${ci.k}')">
+          <div class="cbox${e.cl[ci.k] ? ' on' : ''}"></div>
+          <span class="clabel">${ci.label}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="qcard">
+      <div class="qtext">"${q.t}"</div>
+      <div class="qfrom">— ${q.f}</div>
+    </div>
+  `;
+}
+
+// ─── TRAIN ───────────────────────────────────────────────────
+function rTrain() {
+  const e = entry(), wk = wkKey(), wkd = WK[wk], dn = dayN();
+
+  if (wk === 'rest') {
+    const rq = QUOTES[dn % QUOTES.length];
+    document.getElementById('s-train').innerHTML = `
+      <div class="sh">
+        <div class="sh-sub">Chapter ${dn}</div>
+        <div class="sh-title">Rest Day</div>
+      </div>
+      <div class="rest-block">
+        <div class="rest-big">REST</div>
+        <div class="rest-sub">Walk · Recover · Sleep 7+ hours</div>
+        <div class="rest-quote">"${rq.t}"<br><span style="font-size:8px;letter-spacing:3px;color:var(--red);text-transform:uppercase;margin-top:8px;display:block">— ${rq.f}</span></div>
+      </div>
+    `;
+    return;
+  }
+
+  const totalSets = wkd.ex.reduce((sum, ex) => sum + ex.s, 0);
+  const doneSets  = wkd.ex.reduce((sum, ex, i) => sum + Math.min(e.sets[wk + '_' + i] || 0, ex.s), 0);
+  const p = pct(doneSets, totalSets);
+
+  document.getElementById('s-train').innerHTML = `
+    <div class="sh">
+      <div class="sh-sub">Chapter ${dn} · ${wkd.sub}</div>
+      <div class="sh-title">${wkd.name}</div>
+    </div>
+
+    <div style="padding:12px 16px 4px">
+      <div class="stat-hd" style="margin-bottom:5px">
+        <span class="stat-name">Session Progress</span>
+        <span class="stat-val">${doneSets}<em> / ${totalSets} sets</em></span>
+      </div>
+      <div class="bar" style="height:4px">
+        <div class="bf${p >= 100 ? ' done' : ''}" style="width:${p}%"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Exercises</div>
+      ${wkd.ex.map((ex, i) => {
+        const done = e.sets[wk + '_' + i] || 0;
+        return `
+          <div class="ex">
+            <div class="ex-hd">
+              <span class="ex-name">${ex.n}</span>
+              <span class="ex-scheme">${ex.s} × ${ex.r}</span>
+            </div>
+            <div class="sets-row">
+              ${Array.from({length: ex.s}, (_, j) => `
+                <button class="set-dot${j < done ? ' on' : ''}" onclick="togSet('${wk}',${i},${ex.s},${j})">
+                  ${j < done ? '✓' : j + 1}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <div style="padding:0 14px 14px">
+      <button class="btn${e.workout ? ' done' : ''}" onclick="togWorkout()">
+        ${e.workout ? '✓ SESSION COMPLETE — WARRIOR' : 'MARK SESSION COMPLETE'}
+      </button>
+    </div>
+  `;
+}
+
+// ─── EAT ─────────────────────────────────────────────────────
+function rEat() {
+  const e = entry(); let cal = 0, pro = 0;
+  e.meals.forEach((on, i) => { if (on) { cal += MEALS[i].cal; pro += MEALS[i].pro; } });
+  const remaining = TGT.cal - cal;
+
+  document.getElementById('s-eat').innerHTML = `
+    <div class="sh">
+      <div class="sh-sub">Nutrition · Day ${dayN()}</div>
+      <div class="sh-title">${cal} / ${TGT.cal} kcal</div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Today's Total</div>
+      ${bar('Calories', cal, TGT.cal, ' kcal')}
+      ${bar('Protein', pro, TGT.pro, 'g')}
+      <div style="margin-top:8px;font-size:9px;color:var(--muted);letter-spacing:1px">
+        ${remaining > 0 ? remaining + ' kcal remaining' : 'Target reached.'}
+        &nbsp;·&nbsp; ${TGT.pro - pro > 0 ? (TGT.pro - pro) + 'g protein to go' : 'Protein hit ✓'}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Meals</div>
+      ${MEALS.map(m => `
+        <div class="mrow" onclick="togMeal(${m.id})">
+          <div class="mcheck${e.meals[m.id] ? ' on' : ''}"></div>
+          <div class="minfo">
+            <div class="mtitle">${m.name}</div>
+            <div class="mdetail">${m.detail}</div>
+          </div>
+          <div class="mnums">
+            <div class="mcal">${m.cal}</div>
+            <div class="mpro">${m.pro}g protein</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Rules</div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;line-height:2.2;text-transform:uppercase">
+        <div>✕ &nbsp;No packaged snacks</div>
+        <div>✕ &nbsp;No liquid calories</div>
+        <div>✓ &nbsp;Hungry? Dahi or 30g peanuts</div>
+        <div>✓ &nbsp;Log everything in MyFitnessPal</div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── PROGRESS ────────────────────────────────────────────────
+function rProgress() {
+  const dn = dayN();
+  const lastW = D.weights[D.weights.length - 1]?.v ?? 84;
+  const lastWaist = D.waists.length ? D.waists[D.waists.length - 1].v : null;
+  const lost = (84 - lastW).toFixed(1);
+  const toGo = (lastW - 71).toFixed(1);
+  const pctLost = pct(84 - lastW, 84 - 71);
+
+  document.getElementById('s-progress').innerHTML = `
+    <div class="sh">
+      <div class="sh-sub">Transformation · Day ${dn} of 150</div>
+      <div class="sh-title">Progress Log</div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Weight — 84kg → 71kg</div>
+      <div class="tgrid">
+        <div class="tile">
+          <div class="tile-v">${lastW}<span style="font-size:11px">kg</span></div>
+          <div class="tile-l">Current</div>
+        </div>
+        <div class="tile">
+          <div class="tile-v" style="color:${parseFloat(lost) > 0 ? '#3d7a38' : 'var(--muted)'}">−${Math.abs(parseFloat(lost))}</div>
+          <div class="tile-l">Lost (kg)</div>
+          <div class="tile-s">${pctLost}% to goal</div>
+        </div>
+        <div class="tile">
+          <div class="tile-v">${toGo}</div>
+          <div class="tile-l">To Goal</div>
+          <div class="tile-s">target 71kg</div>
+        </div>
+      </div>
+      ${weightChart()}
+      <div class="inrow">
+        <input id="wi" type="number" placeholder="${lastW}" step="0.1" min="40" max="200">
+        <button onclick="logW()">LOG WEIGHT</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Waist Circumference</div>
+      <div class="tgrid">
+        <div class="tile">
+          <div class="tile-v">${lastWaist ? lastWaist + '<span style="font-size:11px">cm</span>' : '—'}</div>
+          <div class="tile-l">Current</div>
+        </div>
+        <div class="tile">
+          <div class="tile-v" style="color:var(--muted)">~90</div>
+          <div class="tile-l">Est. Start</div>
+        </div>
+        <div class="tile">
+          <div class="tile-v" style="color:var(--muted)">~78</div>
+          <div class="tile-l">Target</div>
+        </div>
+      </div>
+      <div class="inrow">
+        <input id="waisti" type="number" placeholder="90" step="0.5" min="40" max="200">
+        <button onclick="logWaist()">LOG WAIST</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Journey</div>
+      <div class="tgrid">
+        <div class="tile">
+          <div class="tile-v">${dn}</div>
+          <div class="tile-l">Days In</div>
+        </div>
+        <div class="tile">
+          <div class="tile-v">${Math.max(0, 150 - dn)}</div>
+          <div class="tile-l">Days Left</div>
+          <div class="tile-s">to 150 days</div>
+        </div>
+        <div class="tile">
+          <div class="tile-v">${streak()}</div>
+          <div class="tile-l">Streak</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="plabel">Weekly Photo Check</div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;line-height:2">
+        Every Sunday morning — front + side.<br>
+        Same spot. Same light. No filter.<br>
+        The camera doesn't lie. Your eyes adapt.
+      </div>
+    </div>
+  `;
+}
+
+function weightChart() {
+  if (D.weights.length < 2) {
+    return '<div style="height:50px;display:flex;align-items:center;justify-content:center;font-size:8px;letter-spacing:3px;color:var(--muted)">LOG MORE WEIGHTS TO SEE CHART</div>';
+  }
+  const wts = D.weights.slice(-20);
+  const vals = wts.map(x => x.v);
+  const mn = Math.min(...vals) - 0.5, mx = Math.max(...vals) + 0.5;
+  const W = 280, H = 70;
+  const pts = vals.map((v, i) => {
+    const x = (i / (vals.length - 1)) * (W - 20) + 10;
+    const y = H - ((v - mn) / (mx - mn)) * (H - 16) - 8;
+    return x + ',' + y;
+  }).join(' ');
+  const last = pts.split(' ').pop().split(',');
+  return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}">
+    <polyline points="${pts}" fill="none" stroke="#cc0000" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3" fill="#cc0000"/>
+    <text x="4" y="10" fill="#333" font-size="7" font-family="Oswald">${mx.toFixed(1)}</text>
+    <text x="4" y="${H}" fill="#333" font-size="7" font-family="Oswald">${mn.toFixed(1)}</text>
+  </svg>`;
+}
+
+// ─── WALL ────────────────────────────────────────────────────
+function rWall() {
+  document.getElementById('s-wall').innerHTML = `
+    <div class="sh">
+      <div class="sh-sub">The Warrior's Grimoire</div>
+      <div class="sh-title">Motivation Wall</div>
+    </div>
+    <div style="padding:14px 16px 4px;font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase">
+      Berserk · Vinland Saga · Vagabond
+    </div>
+    ${QUOTES.map(q => `
+      <div class="wq">
+        <div class="wqt">"${q.t}"</div>
+        <div class="wqf">— ${q.f}</div>
+      </div>
+    `).join('')}
+    <div style="padding:30px;text-align:center;font-size:7px;letter-spacing:5px;color:var(--muted)">― END OF CHAPTER ―</div>
+  `;
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────
+function togMeal(id) {
+  const e = entry();
+  e.meals[id] = !e.meals[id]; save(); render();
+  toast(e.meals[id] ? MEALS[id].name + ' LOGGED' : MEALS[id].name + ' REMOVED');
+}
+
+function togCl(k) {
+  const e = entry();
+  e.cl[k] = !e.cl[k]; save(); render();
+}
+
+function adj(field, n) {
+  const e = entry();
+  if (field === 'steps')  e.steps  = Math.max(0, Math.min(50000, e.steps + n));
+  if (field === 'water')  e.water  = Math.max(0, Math.min(24, e.water + n));
+  if (field === 'sleep')  e.sleep  = Math.max(0, Math.min(12, Math.round((e.sleep + n) * 2) / 2));
+  save(); render();
+  if (field === 'steps' && e.steps >= TGT.steps)  toast('10K STEPS — DONE');
+  if (field === 'water' && e.water >= TGT.water)  toast('HYDRATION TARGET HIT');
+  if (field === 'sleep' && e.sleep >= TGT.sleep)  toast('SLEEP GOAL REACHED');
+}
+
+function togSet(wk, exIdx, maxSets, setIdx) {
+  const e = entry(), k = wk + '_' + exIdx, cur = e.sets[k] || 0;
+  e.sets[k] = setIdx < cur ? setIdx : setIdx + 1;
+  save(); rTrain();
+}
+
+function togWorkout() {
+  const e = entry(); e.workout = !e.workout; save(); render();
+  if (e.workout) toast('SESSION COMPLETE — WARRIOR');
+}
+
+function logW() {
+  const v = parseFloat(document.getElementById('wi').value);
+  if (!v || v < 30 || v > 250) { toast('INVALID ENTRY'); return; }
+  D.weights.push({ d: td(), v }); save();
+  toast('WEIGHT LOGGED: ' + v + 'kg'); rProgress();
+}
+
+function logWaist() {
+  const v = parseFloat(document.getElementById('waisti').value);
+  if (!v || v < 40 || v > 200) { toast('INVALID ENTRY'); return; }
+  D.waists.push({ d: td(), v }); save();
+  toast('WAIST LOGGED: ' + v + 'cm'); rProgress();
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+load();
+document.getElementById('splash-day').textContent = dayN();
+rHome();
+setTimeout(() => document.getElementById('splash').classList.add('gone'), 1200);
+</script>
+</body>
+</html>
