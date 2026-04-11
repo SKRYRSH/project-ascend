@@ -13,7 +13,7 @@
 <style>
 :root{
   --bg:#080609;
-  --s1:rgba(230,210,165,.028);
+  --s1:rgba(6,5,8,.82);
   --s2:rgba(230,210,165,.014);
   --b1:rgba(230,210,165,.11);
   --b2:rgba(230,210,165,.2);
@@ -44,10 +44,20 @@ body::after{
   background:radial-gradient(ellipse,rgba(201,168,76,.07) 0%,transparent 60%);
   pointer-events:none;z-index:0;
 }
-/* vignette */
+/* full-screen artwork bg — changes per tab */
+#screen-bg{
+  position:fixed;inset:0;z-index:0;
+  background-size:cover;background-position:center 25%;
+}
+/* strong gradient overlay so panels are readable over the art */
 #vignette{
   position:fixed;inset:0;pointer-events:none;z-index:1;
-  background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(4,3,6,.65) 100%);
+  background:linear-gradient(180deg,
+    rgba(8,6,9,.45) 0%,
+    rgba(8,6,9,.72) 40%,
+    rgba(8,6,9,.93) 75%,
+    rgba(8,6,9,.97) 100%
+  );
 }
 
 #app{display:flex;flex-direction:column;height:100vh;height:100dvh;position:relative;z-index:2}
@@ -81,10 +91,11 @@ body::after{
 .panel{
   margin:10px 14px 0;
   background:var(--s1);
-  border:1px solid var(--b1);
+  border:1px solid rgba(230,210,165,.18);
   border-radius:2px;
   padding:18px;
   position:relative;overflow:hidden;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   box-shadow:0 4px 24px rgba(0,0,0,.35),0 1px 0 rgba(201,168,76,.06) inset;
 }
 .panel::before{
@@ -197,7 +208,7 @@ body::after{
   color:var(--t3);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;
   cursor:pointer;transition:all .12s;white-space:nowrap;
 }
-.cb.p{flex:1;background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.22);color:var(--gold);font-family:'Bebas Neue',cursive;font-size:13px;letter-spacing:1px}
+.cb.p{flex:1;background:rgba(201,168,76,.22);border-color:rgba(201,168,76,.55);color:var(--gold);font-family:'Bebas Neue',cursive;font-size:13px;letter-spacing:1px}
 .cb:active{opacity:.4;transform:scale(.96)}
 
 /* ── meal grid (quick log) ── */
@@ -306,7 +317,7 @@ body::after{
   color:var(--t3);font-family:'Bebas Neue',cursive;font-size:15px;
   letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .18s;
 }
-.btn.done{background:rgba(201,168,76,.09);border-color:rgba(201,168,76,.3);color:var(--gold)}
+.btn.done{background:rgba(201,168,76,.28);border-color:rgba(201,168,76,.7);color:var(--gold)}
 
 /* ── rest ── */
 .rblock{text-align:center;padding:60px 20px}
@@ -384,15 +395,7 @@ body::after{
 /* ── hero image banner ── */
 .hero{
   width:100%;height:265px;
-  background-size:cover;background-position:center 25%;
   position:relative;overflow:hidden;flex-shrink:0;
-}
-.hero-fade{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,
-    rgba(8,6,9,1) 0%,rgba(8,6,9,.78) 28%,
-    rgba(8,6,9,.18) 65%,transparent 100%
-  );
 }
 .hero-content{position:absolute;bottom:0;left:0;right:0;padding:22px 18px 20px}
 .hero-ey{font-family:'Bebas Neue',cursive;font-size:9px;letter-spacing:5px;color:rgba(201,168,76,.5);margin-bottom:5px}
@@ -513,6 +516,7 @@ body::after{
 </head>
 <body>
 
+<div id="screen-bg"></div>
 <div id="vignette"></div>
 
 <div id="splash">
@@ -875,15 +879,25 @@ function charImg(f){
   if(f.includes('VINLAND'))return IMG.thorfinn;
   return IMG.musashi;
 }
-function hero(img,ey,title,sub){
-  return`<div class="hero" style="background-image:url('${img}')">
-    <div class="hero-fade"></div>
+function hero(ey,title,sub){
+  return`<div class="hero">
     <div class="hero-content">
       <div class="hero-ey">${ey}</div>
       <div class="hero-t">${title}</div>
       <div class="hero-s">${sub}</div>
     </div>
   </div>`;
+}
+const BG_MAP={
+  home:IMG.home,
+  train:IMG.pushTrain,
+  eat:IMG.musashi,
+  progress:IMG.progress,
+  wall:IMG.guts
+};
+function setBg(id,override){
+  const src=override||BG_MAP[id]||IMG.musashi;
+  document.getElementById('screen-bg').style.backgroundImage="url('"+src+"')";
 }
 
 let _t;
@@ -896,6 +910,7 @@ function go(id){
   document.querySelectorAll('.nb').forEach(n=>n.classList.remove('on'));
   document.getElementById('s-'+id).classList.add('active');
   document.querySelector('[data-tab="'+id+'"]').classList.add('on');
+  setBg(id);
   render();
 }
 function render(){({home:rHome,train:rTrain,eat:rEat,progress:rProg,wall:rWall})[tab]();}
@@ -911,7 +926,7 @@ function rHome(){
     {k:'supps',l:'Supplements / protein powder'}
   ];
   document.getElementById('s-home').innerHTML=`
-    ${hero(IMG.home,'Project Ascend · Day '+dn,smood(s),fmtD(td()))}
+    ${hero('Project Ascend · Day '+dn,smood(s),fmtD(td()))}
 
     <div class="panel a1">
       <div class="plbl">Daily Glow Score</div>
@@ -1010,7 +1025,8 @@ function rTrain(){
   if(wk==='rest'){
     const rq=QQ[dn%QQ.length];
     document.getElementById('s-train').innerHTML=`
-      ${hero(IMG.walkTrain,'Rest Day · Day '+dn,'Rest.','Walk · Recover · Sleep 7+ hours')}
+      ${(setBg('train',IMG.walkTrain),'')
+      }${hero('Rest Day · Day '+dn,'Rest.','Walk · Recover · Sleep 7+ hours')}
       <div class="qcard" style="margin:10px 14px 0">
         <div class="q-portrait" style="background-image:url('${charImg(rq.f)}')"></div>
         <div class="qmark">"</div>
@@ -1023,7 +1039,8 @@ function rTrain(){
   const don=wkd.ex.reduce((s,ex,i)=>s+Math.min(e.sets[wk+'_'+i]||0,ex.s),0);
   const p=pct(don,tot);
   document.getElementById('s-train').innerHTML=`
-    ${hero(trainImg(wk),'Day '+dn+' · '+wkd.name,wkd.name,wkd.sub)}
+    ${(setBg('train',trainImg(wk)),'')
+    }${hero('Day '+dn+' · '+wkd.name,wkd.name,wkd.sub)}
     <div style="padding:14px 18px 4px">
       <div class="srow" style="margin-bottom:8px"><span class="sname">Sets Done</span><span class="sval">${don}<em> / ${tot}</em></span></div>
       <div class="bar" style="height:3px"><div class="bf${p>=100?' done':''}" style="width:${p}%"></div></div>
@@ -1097,7 +1114,7 @@ function rProg(){
   const lws=D.waists.length?D.waists[D.waists.length-1].v:null;
   const lost=(84-lw).toFixed(1),toGo=(lw-71).toFixed(1);
   document.getElementById('s-progress').innerHTML=`
-    ${hero(IMG.progress,'Day '+dn+' of 150','The Body\nChanges.','84kg → 71kg · your transformation')}
+    ${hero('Day '+dn+' of 150','The Body\nChanges.','84kg → 71kg · your transformation')}
     <div class="panel">
       <div class="plbl">Weight — 84kg → 71kg</div>
       <div class="tg">
@@ -1189,6 +1206,7 @@ load();
 document.getElementById('sd').textContent=Math.max(1,dayN());
 document.getElementById('splash').style.backgroundImage=`url('${IMG.splash}')`;
 document.getElementById('splash').style.cssText+=';background-size:cover;background-position:center 30%';
+setBg('home');
 try{rHome();}catch(err){console.error(err);}
 setTimeout(()=>document.getElementById('splash').classList.add('gone'),1400);
 </script>
