@@ -455,8 +455,14 @@ if('serviceWorker'in navigator){
     reg.addEventListener('updatefound',()=>{
       const nw=reg.installing;
       nw.addEventListener('statechange',()=>{
-        if(nw.state==='installed'&&navigator.serviceWorker.controller){
-          document.getElementById('update-banner').classList.add('show');
+        if(nw.state==='installed'){
+          if(navigator.serviceWorker.controller){
+            // update: prompt user
+            document.getElementById('update-banner').classList.add('show');
+          } else {
+            // first install: activate immediately, no banner needed
+            nw.postMessage('skipWaiting');
+          }
         }
       });
     });
@@ -471,23 +477,38 @@ function applyUpdate(){
 
 const START='2026-04-11';
 const TGT={cal:1850,pro:140,steps:10000,water:12,sleep:7};
-const SCHED=['push','pull','walk','push','pullcore','rest','rest'];
+const SCHED=['push','pull','walk','pushskill','pullcore','rest','rest'];
+// Each exercise has a prog[] array — level up through progressions as you get stronger
 const WK={
-  push:{name:'PUSH',sub:'Chest · Shoulders · Triceps',ex:[
-    {n:'Incline DB Press',s:4,r:'10'},{n:'Cable Chest Fly',s:3,r:'12'},
-    {n:'Shoulder Press Machine',s:3,r:'10'},{n:'Lateral Raises + Drop Set',s:3,r:'12'},
-    {n:'Tricep Pushdown',s:3,r:'12'}]},
-  pull:{name:'PULL',sub:'Back · Biceps',ex:[
-    {n:'Weighted Pull-ups',s:5,r:'MAX'},{n:'Wide Lat Pulldown',s:4,r:'10'},
-    {n:'Cable Rows',s:3,r:'12'},{n:'Single Arm DB Row',s:3,r:'12 each'},
-    {n:'Face Pulls',s:3,r:'15'}]},
-  walk:{name:'WALK + CORE',sub:'10,000 Steps · Abs',ex:[
-    {n:'Hanging Leg Raises',s:4,r:'15'},{n:'Cable Crunches',s:3,r:'15'},
-    {n:'Plank',s:3,r:'60s'}]},
-  pullcore:{name:'PULL + CORE',sub:'Back · Biceps · Abs',ex:[
-    {n:'Pull-ups',s:5,r:'MAX'},{n:'Lat Pulldown',s:3,r:'10'},
-    {n:'DB Rows',s:3,r:'12'},{n:'Hanging Knee Raises',s:3,r:'15'},
-    {n:'Plank Variations',s:3,r:'45s'}]},
+  push:{name:'PUSH',sub:'Horizontal + Vertical Push',ex:[
+    {n:'Push-up Series',s:4,r:'10–15',prog:['Push-ups','Diamond Push-ups','Archer Push-ups','Pseudo-Planche PU','One-Arm Negatives']},
+    {n:'HSPU Series',s:4,r:'8–10',prog:['Pike Push-ups','Elevated Pike PU','Wall HSPU Negatives','Wall HSPU','Freestanding HSPU']},
+    {n:'Dip Series',s:3,r:'10–12',prog:['Bench Dips','Parallel Bar Dips','Ring Dips','Korean Dips']},
+    {n:'Tricep Series',s:3,r:'12–15',prog:['Diamond Hold','Close-Grip Dips','Ring Tricep Extensions']}
+  ]},
+  pull:{name:'PULL',sub:'Rows + Pull-ups',ex:[
+    {n:'Row Series',s:4,r:'10–12',prog:['Table Rows','Australian Rows','Feet-Elevated Rows','Archer Rows','Ring Rows']},
+    {n:'Pull-up Series',s:5,r:'MAX',prog:['Dead Hang 30s','Negative Pull-ups','Pull-ups','Close Grip Pull-ups','Archer Pull-ups','One-Arm Negatives']},
+    {n:'Chin-up Series',s:3,r:'8–10',prog:['Chin-ups','Close Chin-ups','L-sit Chin-ups']},
+    {n:'Rear Delt / RC',s:3,r:'15',prog:['Band Face Pulls','Ring Face Pulls','Wide Ring Rows']}
+  ]},
+  walk:{name:'WALK + CORE',sub:'10k Steps · Core Foundations',ex:[
+    {n:'Hollow Body Series',s:4,r:'20–30s',prog:['Tuck Hollow Hold','Hollow Hold','Hollow Rocks','Straddle Hold']},
+    {n:'L-sit Series',s:4,r:'10–15s',prog:['Foot-Tuck Hold','One-Leg L-sit','Full L-sit','V-sit']},
+    {n:'Plank Series',s:3,r:'45–60s',prog:['Plank','RKC Plank','Ring Plank','Planche Lean']}
+  ]},
+  pushskill:{name:'PUSH + SKILL',sub:'Push Strength + Handstand / Planche',ex:[
+    {n:'Push-up Series',s:4,r:'10–15',prog:['Push-ups','Diamond Push-ups','Archer Push-ups','Pseudo-Planche PU','One-Arm Negatives']},
+    {n:'Handstand Series',s:5,r:'20–60s',prog:['Wall Kick-up Hold','Chest-to-Wall HS','Back-to-Wall HS','Freestanding Kick-up','Freestanding HS Hold']},
+    {n:'Planche Series',s:4,r:'10–20s',prog:['Planche Lean','Tuck Planche','Advanced Tuck Planche','Straddle Planche','Full Planche']},
+    {n:'Pike Push-up / HSPU',s:3,r:'8–10',prog:['Pike Push-ups','Elevated Pike PU','Wall HSPU Negatives','Wall HSPU']}
+  ]},
+  pullcore:{name:'PULL + CORE',sub:'Pull-ups + Advanced Core',ex:[
+    {n:'Pull-up Series',s:5,r:'MAX',prog:['Dead Hang 30s','Negative Pull-ups','Pull-ups','Close Grip Pull-ups','Archer Pull-ups']},
+    {n:'Front Lever Series',s:4,r:'5–10s',prog:['Tuck FL Hold','Advanced Tuck FL','One-Leg FL','Straddle FL','Full Front Lever']},
+    {n:'Dragon Flag Series',s:3,r:'6–8',prog:['Tuck Dragon Flag','Bent-Knee Dragon Flag','Full Dragon Flag']},
+    {n:'L-sit / V-sit',s:3,r:'15s',prog:['One-Leg L-sit','Full L-sit','Straddle L-sit','V-sit']}
+  ]},
   rest:{name:'REST',sub:'Walk · Recover · Sleep',ex:[]}
 };
 const MEALS=[
@@ -516,7 +537,7 @@ const QQ=[
 
 const KEY='ascend_v1';
 let D;
-function load(){const r=localStorage.getItem(KEY);D=r?JSON.parse(r):{weights:[{d:START,v:84}],waists:[],entries:{}};}
+function load(){const r=localStorage.getItem(KEY);D=r?JSON.parse(r):{weights:[{d:START,v:84}],waists:[],entries:{},prog:{}};if(!D.prog)D.prog={};}
 function save(){localStorage.setItem(KEY,JSON.stringify(D));}
 function td(){const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
 function ent(date){
@@ -737,7 +758,21 @@ function rTrain(){
       <div class="plbl">Exercises</div>
       ${wkd.ex.map((ex,i)=>{
         const d=e.sets[wk+'_'+i]||0;
-        return`<div class="ex"><div class="exh"><span class="exn">${ex.n}</span><span class="exs">${ex.s} × ${ex.r}</span></div>
+        const pk=wk+'_'+i;
+        const lvl=D.prog[pk]||0;
+        const cur=ex.prog?ex.prog[lvl]:'';
+        const maxLvl=ex.prog?ex.prog.length-1:0;
+        const progBar=ex.prog?`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div>
+            <div style="font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:1px;color:var(--gold)">${cur}</div>
+            <div style="font-size:8px;letter-spacing:2px;color:var(--t4);margin-top:2px">Level ${lvl+1} / ${maxLvl+1}</div>
+          </div>
+          <div style="display:flex;gap:5px">
+            ${lvl>0?`<button class="cb" style="height:30px;padding:0 10px;font-size:10px" onclick="levelEx('${pk}',-1)">↓</button>`:''}
+            ${lvl<maxLvl?`<button class="cb" style="height:30px;padding:0 10px;font-size:10px;background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.22);color:var(--gold)" onclick="levelEx('${pk}',1)">Level Up ↑</button>`:'<span style="font-size:8px;letter-spacing:2px;color:var(--gold);padding:0 8px">MASTERED</span>'}
+          </div>
+        </div>`:'';
+        return`<div class="ex">${progBar}<div class="exh"><span class="exn">${ex.n}</span><span class="exs">${ex.s} × ${ex.r}</span></div>
         <div class="srow2">${Array.from({length:ex.s},(_,j)=>`<button class="sd${j<d?' on':''}" onclick="togSet('${wk}',${i},${ex.s},${j})">${j<d?'✓':j+1}</button>`).join('')}</div></div>`;
       }).join('')}
     </div>
@@ -862,6 +897,12 @@ function adj(f,n){
   if(f==='sleep'&&e.sleep>=TGT.sleep)toast('Sleep goal reached');
 }
 function togSet(wk,ei,ms,si){const e=ent(),k=wk+'_'+ei,c=e.sets[k]||0;e.sets[k]=si<c?si:si+1;save();rTrain();}
+function levelEx(pk,dir){
+  const wk=pk.split('_').slice(0,-1).join('_'),i=parseInt(pk.split('_').pop());
+  const maxLvl=WK[wk]?.ex[i]?.prog?.length-1||0;
+  D.prog[pk]=Math.max(0,Math.min(maxLvl,(D.prog[pk]||0)+dir));
+  save();toast(dir>0?'Level Up — keep going':'Dropped back a level');rTrain();
+}
 function togW(){const e=ent();e.workout=!e.workout;save();render();if(e.workout)toast('Session complete');}
 function logW(){const v=parseFloat(document.getElementById('wi').value);if(!v||v<30||v>250){toast('Invalid');return;}D.weights.push({d:td(),v});save();toast('Weight: '+v+'kg');rProg();}
 function logWs(){const v=parseFloat(document.getElementById('wsi').value);if(!v||v<40||v>200){toast('Invalid');return;}D.waists.push({d:td(),v});save();toast('Waist: '+v+'cm');rProg();}
