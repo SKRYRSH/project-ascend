@@ -1,9 +1,9 @@
-const CACHE = 'ascend-v1';
+const CACHE = 'ascend-v2';
 const SHELL = ['./','./index.html','./sw.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
-  self.skipWaiting();
+  // wait — don't skipWaiting automatically, let the banner prompt the user
 });
 
 self.addEventListener('activate', e => {
@@ -11,6 +11,10 @@ self.addEventListener('activate', e => {
     Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
   ));
   self.clients.claim();
+});
+
+self.addEventListener('message', e => {
+  if (e.data === 'skipWaiting') self.skipWaiting();
 });
 
 self.addEventListener('fetch', e => {

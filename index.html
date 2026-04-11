@@ -347,6 +347,22 @@ body::after{
 }
 .ni{font-size:13px;line-height:1;font-family:'DM Sans',sans-serif;letter-spacing:0}
 
+/* ── update banner ── */
+#update-banner{
+  position:fixed;top:0;left:0;right:0;z-index:600;
+  background:rgba(201,168,76,.12);border-bottom:1px solid rgba(201,168,76,.3);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  display:none;align-items:center;justify-content:space-between;
+  padding:10px 18px;gap:12px;
+}
+#update-banner.show{display:flex}
+.ub-text{font-family:'Bebas Neue',cursive;font-size:12px;letter-spacing:3px;color:var(--gold)}
+.ub-btn{
+  font-family:'Bebas Neue',cursive;font-size:11px;letter-spacing:3px;
+  background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.4);
+  color:var(--gold);padding:6px 14px;border-radius:3px;cursor:pointer;white-space:nowrap;
+}
+
 /* ── toast ── */
 #toast{
   position:fixed;bottom:76px;left:50%;transform:translateX(-50%);
@@ -425,10 +441,33 @@ body::after{
     <button class="nb" data-tab="wall" onclick="go('wall')"><span class="ni">壁</span>WALL</button>
   </nav>
 </div>
+<div id="update-banner">
+  <span class="ub-text">Update Available</span>
+  <button class="ub-btn" onclick="applyUpdate()">Reload</button>
+</div>
 <div id="toast"></div>
 
 <script>
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+let _swReg;
+if('serviceWorker'in navigator){
+  navigator.serviceWorker.register('./sw.js').then(reg=>{
+    _swReg=reg;
+    reg.addEventListener('updatefound',()=>{
+      const nw=reg.installing;
+      nw.addEventListener('statechange',()=>{
+        if(nw.state==='installed'&&navigator.serviceWorker.controller){
+          document.getElementById('update-banner').classList.add('show');
+        }
+      });
+    });
+  }).catch(()=>{});
+}
+function applyUpdate(){
+  if(_swReg&&_swReg.waiting){
+    _swReg.waiting.postMessage('skipWaiting');
+    navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());
+  }else{location.reload();}
+}
 
 const START='2026-04-11';
 const TGT={cal:1850,pro:140,steps:10000,water:12,sleep:7};
