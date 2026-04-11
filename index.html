@@ -481,33 +481,167 @@ const SCHED=['push','pull','walk','pushskill','pullcore','rest','rest'];
 // Each exercise has a prog[] array — level up through progressions as you get stronger
 const WK={
   push:{name:'PUSH',sub:'Horizontal + Vertical Push',ex:[
-    {n:'Push-up Series',s:4,r:'10–15',prog:['Push-ups','Diamond Push-ups','Archer Push-ups','Pseudo-Planche PU','One-Arm Negatives']},
-    {n:'HSPU Series',s:4,r:'8–10',prog:['Pike Push-ups','Elevated Pike PU','Wall HSPU Negatives','Wall HSPU','Freestanding HSPU']},
-    {n:'Dip Series',s:3,r:'10–12',prog:['Bench Dips','Parallel Bar Dips','Ring Dips','Korean Dips']},
-    {n:'Tricep Series',s:3,r:'12–15',prog:['Diamond Hold','Close-Grip Dips','Ring Tricep Extensions']}
+    {n:'Push-up Series',s:4,r:'8–15',prog:[
+      'Incline Push-ups',        // wall / elevated surface — pure beginner
+      'Knee Push-ups',           // floor but knees down
+      'Push-ups',                // standard
+      'Diamond Push-ups',        // tricep focus, harder
+      'Archer Push-ups',         // unilateral load
+      'Weighted Push-ups',       // plate on back, bridge to more
+      'Pseudo-Planche Push-ups', // leans weight forward, wrist/shoulder prep
+      'One-Arm Negatives',       // 5s descent one arm
+      'One-Arm Push-ups'         // end game
+    ]},
+    {n:'HSPU Series',s:4,r:'6–10',prog:[
+      'Pike Push-ups (floor)',
+      'Pike Push-ups (feet elevated)',
+      'Wall HSPU Negatives (5s)',
+      'Wall HSPU (kipping ok)',
+      'Strict Wall HSPU',
+      'Freestanding HSPU Negatives',
+      'Freestanding HSPU'
+    ]},
+    {n:'Dip Series',s:3,r:'8–15',prog:[
+      'Bench Dips',
+      'Parallel Bar Dips',
+      'Weighted Dips (+5–20kg)',  // add weight plate / dip belt
+      'Ring Dips',
+      'Korean Dips'
+    ]},
+    {n:'Tricep / Shoulder Iso',s:3,r:'10–15',prog:[
+      'Diamond Push-up Holds',
+      'Close-Grip Dips',
+      'Ring Tricep Extensions',
+      'Pike Hold Press (rings)'
+    ]}
   ]},
   pull:{name:'PULL',sub:'Rows + Pull-ups',ex:[
-    {n:'Row Series',s:4,r:'10–12',prog:['Table Rows','Australian Rows','Feet-Elevated Rows','Archer Rows','Ring Rows']},
-    {n:'Pull-up Series',s:5,r:'MAX',prog:['Dead Hang 30s','Negative Pull-ups','Pull-ups','Close Grip Pull-ups','Archer Pull-ups','One-Arm Negatives']},
-    {n:'Chin-up Series',s:3,r:'8–10',prog:['Chin-ups','Close Chin-ups','L-sit Chin-ups']},
-    {n:'Rear Delt / RC',s:3,r:'15',prog:['Band Face Pulls','Ring Face Pulls','Wide Ring Rows']}
+    {n:'Row Series',s:4,r:'8–12',prog:[
+      'Incline Table Rows',          // almost standing, easiest
+      'Australian Rows (horizontal)',
+      'Feet-Elevated Rows',
+      'Weighted Australian Rows',    // vest / plate on chest
+      'Ring Rows',
+      'Archer Rows',
+      'One-Arm Ring Rows'
+    ]},
+    {n:'Pull-up Series',s:5,r:'MAX',prog:[
+      'Dead Hang (30s)',
+      'Scapular Pull-ups',
+      'Negative Pull-ups (5s descent)',
+      'Band-Assisted Pull-ups',
+      'Pull-ups',
+      'Weighted Pull-ups (+5–20kg)',  // dip belt / vest
+      'Close Grip Pull-ups',
+      'Archer Pull-ups',
+      'One-Arm Negatives',
+      'One-Arm Pull-up'
+    ]},
+    {n:'Chin-up / Bicep Series',s:3,r:'8–10',prog:[
+      'Chin-ups',
+      'Weighted Chin-ups',
+      'Close-Grip Chin-ups',
+      'L-sit Chin-ups'
+    ]},
+    {n:'Rear Delt / Rotator',s:3,r:'15',prog:[
+      'Band Face Pulls',
+      'Ring Face Pulls',
+      'Wide Ring Rows',
+      'Ring Reverse Flys'
+    ]}
   ]},
   walk:{name:'WALK + CORE',sub:'10k Steps · Core Foundations',ex:[
-    {n:'Hollow Body Series',s:4,r:'20–30s',prog:['Tuck Hollow Hold','Hollow Hold','Hollow Rocks','Straddle Hold']},
-    {n:'L-sit Series',s:4,r:'10–15s',prog:['Foot-Tuck Hold','One-Leg L-sit','Full L-sit','V-sit']},
-    {n:'Plank Series',s:3,r:'45–60s',prog:['Plank','RKC Plank','Ring Plank','Planche Lean']}
+    {n:'Hollow Body Series',s:4,r:'15–40s',prog:[
+      'Tuck Hollow Hold',
+      'Hollow Hold (one leg extended)',
+      'Full Hollow Hold',
+      'Hollow Rocks',
+      'Straddle Hollow Hold'
+    ]},
+    {n:'L-sit Series',s:4,r:'5–20s',prog:[
+      'Seated Leg Tucks',
+      'Foot-Tuck Hold (parallel bars / floor)',
+      'One-Leg L-sit',
+      'Full L-sit',
+      'Straddle L-sit',
+      'V-sit'
+    ]},
+    {n:'Plank / Anti-Rotation',s:3,r:'30–60s',prog:[
+      'Plank',
+      'RKC Plank (squeeze everything)',
+      'Ring Plank',
+      'Planche Lean',
+      'Band Planche Lean'
+    ]}
   ]},
-  pushskill:{name:'PUSH + SKILL',sub:'Push Strength + Handstand / Planche',ex:[
-    {n:'Push-up Series',s:4,r:'10–15',prog:['Push-ups','Diamond Push-ups','Archer Push-ups','Pseudo-Planche PU','One-Arm Negatives']},
-    {n:'Handstand Series',s:5,r:'20–60s',prog:['Wall Kick-up Hold','Chest-to-Wall HS','Back-to-Wall HS','Freestanding Kick-up','Freestanding HS Hold']},
-    {n:'Planche Series',s:4,r:'10–20s',prog:['Planche Lean','Tuck Planche','Advanced Tuck Planche','Straddle Planche','Full Planche']},
-    {n:'Pike Push-up / HSPU',s:3,r:'8–10',prog:['Pike Push-ups','Elevated Pike PU','Wall HSPU Negatives','Wall HSPU']}
+  pushskill:{name:'PUSH + SKILL',sub:'Push + Handstand + Planche',ex:[
+    {n:'Push-up Series',s:4,r:'8–15',prog:[
+      'Incline Push-ups',
+      'Knee Push-ups',
+      'Push-ups',
+      'Diamond Push-ups',
+      'Archer Push-ups',
+      'Weighted Push-ups',
+      'Pseudo-Planche Push-ups',
+      'One-Arm Negatives',
+      'One-Arm Push-ups'
+    ]},
+    {n:'Handstand Series',s:5,r:'10–60s',prog:[
+      'Frog Stand / Crow Stand',          // beginner balance skill
+      'Wall Kick-up + Hold (30s)',
+      'Chest-to-Wall HS (30s)',
+      'Back-to-Wall HS (30s)',
+      'Freestanding Kick-up Practice',
+      'Freestanding HS Hold (5s)',
+      'Freestanding HS Hold (30s+)',
+      'HS Push-ups from HS'
+    ]},
+    {n:'Planche Series',s:4,r:'5–20s',prog:[
+      'Planche Lean (3s)',
+      'Planche Lean (10s)',
+      'Tuck Planche',
+      'Advanced Tuck Planche',
+      'Straddle Planche',
+      'Full Planche'
+    ]},
+    {n:'Pike / HSPU Accessory',s:3,r:'8–10',prog:[
+      'Pike Push-ups (floor)',
+      'Pike Push-ups (feet elevated)',
+      'Wall HSPU Negatives',
+      'Strict Wall HSPU'
+    ]}
   ]},
-  pullcore:{name:'PULL + CORE',sub:'Pull-ups + Advanced Core',ex:[
-    {n:'Pull-up Series',s:5,r:'MAX',prog:['Dead Hang 30s','Negative Pull-ups','Pull-ups','Close Grip Pull-ups','Archer Pull-ups']},
-    {n:'Front Lever Series',s:4,r:'5–10s',prog:['Tuck FL Hold','Advanced Tuck FL','One-Leg FL','Straddle FL','Full Front Lever']},
-    {n:'Dragon Flag Series',s:3,r:'6–8',prog:['Tuck Dragon Flag','Bent-Knee Dragon Flag','Full Dragon Flag']},
-    {n:'L-sit / V-sit',s:3,r:'15s',prog:['One-Leg L-sit','Full L-sit','Straddle L-sit','V-sit']}
+  pullcore:{name:'PULL + CORE',sub:'Pull-ups + Front Lever + Dragon Flag',ex:[
+    {n:'Pull-up Series',s:5,r:'MAX',prog:[
+      'Dead Hang (30s)',
+      'Scapular Pull-ups',
+      'Negative Pull-ups',
+      'Band-Assisted Pull-ups',
+      'Pull-ups',
+      'Weighted Pull-ups',
+      'Archer Pull-ups',
+      'One-Arm Negatives'
+    ]},
+    {n:'Front Lever Series',s:4,r:'5–10s',prog:[
+      'Tuck FL Hold',
+      'Advanced Tuck FL',
+      'One-Leg FL',
+      'Straddle FL',
+      'Full Front Lever'
+    ]},
+    {n:'Dragon Flag Series',s:3,r:'5–8',prog:[
+      'Tuck Dragon Flag',
+      'Bent-Knee Dragon Flag',
+      'Straddle Dragon Flag',
+      'Full Dragon Flag'
+    ]},
+    {n:'L-sit / V-sit',s:3,r:'10–20s',prog:[
+      'Foot-Tuck Hold',
+      'One-Leg L-sit',
+      'Full L-sit',
+      'Straddle L-sit',
+      'V-sit'
+    ]}
   ]},
   rest:{name:'REST',sub:'Walk · Recover · Sleep',ex:[]}
 };
