@@ -749,10 +749,10 @@ const WK={
   rest:{name:'REST',sub:'Walk · Recover · Sleep',ex:[]}
 };
 const MEALS=[
-  {id:0,name:'BREAKFAST',detail:'4 boiled eggs · banana · black chai',cal:330,pro:28},
-  {id:1,name:'LUNCH',detail:'Dal · 2 rotis · sabzi',cal:500,pro:20},
-  {id:2,name:'SNACK',detail:'200g plain dahi · 30g peanuts',cal:250,pro:14},
-  {id:3,name:'DINNER',detail:'200g chicken · rice or 2 rotis',cal:580,pro:46}
+  {id:0,name:'BREAKFAST',detail:'4 boiled eggs · black chai · fruit',cal:330,pro:28},
+  {id:1,name:'LUNCH',detail:'Kala chana (200g) · 2 rotis · sabzi',cal:490,pro:26},
+  {id:2,name:'SNACK',detail:'200g plain dahi · handful kala chana',cal:230,pro:18},
+  {id:3,name:'DINNER',detail:'Eggs or chicken · rice or 2 rotis · dahi',cal:560,pro:40}
 ];
 const QQ=[
   {t:"If you're always worried about crushing the ants beneath your feet... you couldn't walk. Could you?",f:"GUTS — BERSERK"},
@@ -779,7 +779,7 @@ function save(){localStorage.setItem(KEY,JSON.stringify(D));}
 function td(){const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
 function ent(date){
   const k=date||td();
-  if(!D.entries[k])D.entries[k]={meals:[false,false,false,false],workout:false,sets:{},steps:0,water:0,sleep:0,cl:{am:false,pm:false,noliq:false,supps:false}};
+  if(!D.entries[k])D.entries[k]={meals:[false,false,false,false],workout:false,sets:{},steps:0,water:0,sleep:0,cl:{nofap:false,sleep11:false,noliq:false,coldwash:false}};
   save();return D.entries[k];
 }
 function dayN(date){
@@ -802,7 +802,7 @@ function glowScore(){
   const e=ent(),m=macros();let sc=0;
   if(e.sleep>=7)sc+=25;else if(e.sleep>=6)sc+=15;else if(e.sleep>=5)sc+=8;
   sc+=Math.round(Math.min(1,e.water/TGT.water)*20);
-  if(e.cl.am)sc+=10;if(e.cl.pm)sc+=10;
+  if(e.cl.nofap)sc+=15;if(e.cl.sleep11)sc+=10;
   if(e.cl.noliq)sc+=10;if(e.workout)sc+=15;
   if(m.pro>=TGT.pro*.8)sc+=10;
   return sc;
@@ -892,8 +892,8 @@ const BG_MAP={
   home:IMG.home,
   train:IMG.pushTrain,
   eat:IMG.musashi,
-  progress:IMG.progress,
-  wall:IMG.guts
+  progress:IMG.toji,
+  wall:IMG.toji
 };
 function setBg(id,override){
   const src=override||BG_MAP[id]||IMG.musashi;
@@ -920,10 +920,10 @@ function rHome(){
   const wk=wkKey(),wkd=WK[wk],q=QQ[(dn-1)%QQ.length];
   const gs=glowScore(),cld=Object.values(e.cl).filter(Boolean).length;
   const cl=[
-    {k:'am',l:'Skincare AM — wash · niacinamide · SPF 50'},
-    {k:'pm',l:'Skincare PM — wash · retinol · moisturiser'},
+    {k:'nofap',l:'No Fap — energy stays in'},
+    {k:'sleep11',l:'Sleep by 11 PM tonight'},
     {k:'noliq',l:'Zero liquid calories'},
-    {k:'supps',l:'Supplements / protein powder'}
+    {k:'coldwash',l:'Cold face wash AM + PM'}
   ];
   document.getElementById('s-home').innerHTML=`
     ${hero('Project Ascend · Day '+dn,smood(s),fmtD(td()))}
