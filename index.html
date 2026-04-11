@@ -5,349 +5,409 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="theme-color" content="#050505">
+<meta name="theme-color" content="#07060a">
 <title>PROJECT ASCEND</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Crimson+Text:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#050505;
-  --panel:#0d0d0d;
-  --panel2:#141414;
-  --border:#222;
-  --border2:#2e2e2e;
-  --cream:#e8dcc8;
-  --cream2:#a89880;
-  --red:#cc0000;
-  --red2:#990000;
-  --red3:#3d0000;
-  --muted:#444;
-  --green:#2d5a27;
+  --bg:#07060a;
+  --s1:rgba(255,252,244,.032);
+  --b1:rgba(255,252,244,.07);
+  --b2:rgba(255,252,244,.13);
+  --t1:#f5efe0;
+  --t2:rgba(245,239,224,.46);
+  --t3:rgba(245,239,224,.22);
+  --t4:rgba(245,239,224,.09);
+  --gold:#c9a84c;
+  --gold2:#f2cc6b;
+  --gold3:#7a6128;
+  --gg:linear-gradient(135deg,#f2cc6b 0%,#c9a84c 50%,#a87d28 100%);
+  --green:#4ade80;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--cream);font-family:'Oswald',system-ui,sans-serif;overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
 
-/* manga dot texture on body */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
+  background-size:300px 300px;opacity:.55;mix-blend-mode:overlay;
+}
 body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.016) 1px,transparent 1px),
-                   radial-gradient(circle,rgba(255,255,255,.008) 1px,transparent 1px);
-  background-size:18px 18px,9px 9px;
-  background-position:0 0,4.5px 4.5px;
+  content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;
+  background:radial-gradient(ellipse,rgba(201,168,76,.055) 0%,transparent 65%);
+  pointer-events:none;z-index:0;
 }
 
-#app{display:flex;flex-direction:column;height:100vh;height:100dvh;position:relative;z-index:1}
-
-/* ── screens ── */
-.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:68px}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;position:relative;z-index:2}
+.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:72px}
 .screen.active{display:block}
 .screen::-webkit-scrollbar{width:2px}
-.screen::-webkit-scrollbar-thumb{background:var(--red2)}
+.screen::-webkit-scrollbar-thumb{background:var(--gold3)}
 
-/* ── screen header ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes gpulse{0%,100%{opacity:.72}50%{opacity:1}}
+@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.a1{animation:fadeUp .42s ease .05s both}
+.a2{animation:fadeUp .42s ease .10s both}
+.a3{animation:fadeUp .42s ease .16s both}
+.a4{animation:fadeUp .42s ease .22s both}
+.a5{animation:fadeUp .42s ease .28s both}
+.a6{animation:fadeUp .42s ease .34s both}
+
+/* ── header ── */
 .sh{
-  position:sticky;top:0;z-index:20;
-  padding:13px 16px 10px;
-  background:var(--bg);
-  border-bottom:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px 11px;position:sticky;top:0;z-index:20;
+  background:rgba(7,6,10,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--b1);
 }
-.sh-sub{font-size:8px;letter-spacing:5px;color:var(--red);text-transform:uppercase;margin-bottom:1px}
-.sh-title{font-size:22px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.sh-l{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:3px;line-height:1}
+.sh-r{font-size:10px;color:var(--t4);letter-spacing:1.5px}
 
-/* ── manga panel cards ── */
+/* ── panel (manga card) ── */
 .panel{
-  margin:10px 14px;
-  background:var(--panel);
-  border:1px solid var(--border2);
-  border-left:3px solid var(--red);
-  padding:14px;
+  margin:10px 14px 0;
+  background:var(--s1);
+  border:1px solid var(--b1);
+  border-radius:3px;
+  padding:18px;
   position:relative;overflow:hidden;
 }
-/* halftone dots inside panels */
-.panel::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:radial-gradient(circle,rgba(255,255,255,.012) 1px,transparent 1px);
-  background-size:6px 6px;
+.panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.16),transparent);
+  pointer-events:none;
 }
-.plabel{
-  font-size:7px;letter-spacing:4px;color:var(--red);text-transform:uppercase;
-  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+.plbl{
+  font-family:'Bebas Neue',cursive;font-size:11px;letter-spacing:4px;
+  color:var(--t4);text-transform:uppercase;margin-bottom:14px;
 }
-.plabel::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* ── glow ring ── */
+.ring-wrap{display:flex;justify-content:center;padding:6px 0 10px}
+.ring-scene{position:relative;width:156px;height:156px;display:flex;align-items:center;justify-content:center}
+.ring-speed{
+  position:absolute;inset:-10px;
+  background:repeating-conic-gradient(
+    from 0deg,
+    transparent 0deg 5deg,
+    rgba(201,168,76,.045) 5deg 6deg
+  );
+  border-radius:50%;
+  animation:spin-slow 16s linear infinite;
+}
+.ring{position:relative;width:156px;height:156px;z-index:1;animation:gpulse 3s ease-in-out infinite}
+.ring svg{width:156px;height:156px;transform:rotate(-90deg)}
+.ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-num{
+  font-family:'Bebas Neue',cursive;font-size:54px;letter-spacing:2px;line-height:.9;
+  background:var(--gg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ring-sub{font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-top:4px}
+.ring-lbl{
+  text-align:center;margin-top:12px;
+  font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:5px;
+  background:var(--gg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ring-desc{text-align:center;font-size:11px;color:var(--t3);margin-top:5px;line-height:1.65;max-width:230px;margin-left:auto;margin-right:auto}
+
+/* ── streak ── */
+.streak-wrap{display:flex;align-items:flex-end;gap:2px;padding:2px 0}
+.streak-n{
+  font-family:'Bebas Neue',cursive;font-size:100px;letter-spacing:-3px;line-height:.82;flex-shrink:0;
+  background:var(--gg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.streak-r{padding-bottom:8px;margin-left:8px}
+.streak-mood{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:.3px;line-height:1.4}
+.streak-since{font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-top:6px}
+.streak-unit{font-family:'Bebas Neue',cursive;font-size:10px;letter-spacing:3px;color:var(--t4);display:block;margin-top:3px}
+
+/* ── battle tile ── */
+.battle-tile{
+  margin:10px 14px 0;padding:22px 20px;border-radius:3px;
+  background:linear-gradient(135deg,rgba(201,168,76,.065) 0%,transparent 70%);
+  border:1px solid rgba(201,168,76,.14);cursor:pointer;position:relative;overflow:hidden;
+}
+.battle-tile::after{
+  content:'';position:absolute;top:0;bottom:0;right:0;width:90px;
+  background:repeating-linear-gradient(
+    -55deg,
+    transparent,transparent 3px,
+    rgba(201,168,76,.028) 3px,rgba(201,168,76,.028) 4px
+  );
+  pointer-events:none;
+}
+.bt-type{font-family:'Bebas Neue',cursive;font-size:9px;letter-spacing:5px;color:var(--gold3);margin-bottom:5px}
+.bt-name{
+  font-family:'Bebas Neue',cursive;font-size:36px;letter-spacing:3px;line-height:.92;
+  background:var(--gg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.bt-sub{font-size:10px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;margin-top:7px}
+.bt-arr{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',cursive;font-size:26px;color:var(--gold);opacity:.3;z-index:1}
 
 /* ── stat bars ── */
-.stat{margin-bottom:11px}
+.stat{margin-bottom:14px}
 .stat:last-child{margin-bottom:0}
-.stat-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
-.stat-name{font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
-.stat-val{font-size:14px;font-weight:700}
-.stat-val em{color:var(--muted);font-style:normal;font-weight:400;font-size:11px}
-.bar{height:3px;background:var(--border2);overflow:hidden}
-.bf{height:100%;background:var(--red);transition:width .35s ease}
-.bf.done{background:#3d7a38}
+.srow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.sname{font-family:'Bebas Neue',cursive;font-size:11px;letter-spacing:3px;color:var(--t3);text-transform:uppercase}
+.sval{font-family:'Bebas Neue',cursive;font-size:19px;letter-spacing:1px}
+.sval em{font-style:normal;font-family:'DM Sans',sans-serif;font-size:10px;color:var(--t3)}
+.bar{height:2px;background:rgba(255,255,255,.05);border-radius:0;overflow:hidden}
+.bf{height:100%;background:linear-gradient(90deg,#7a6128,#f2cc6b);transition:width .7s cubic-bezier(.4,0,.2,1)}
+.bf.done{background:linear-gradient(90deg,#166534,#4ade80)}
 
-/* ── streak hero ── */
-.streak-hero{
-  padding:20px 16px;display:flex;align-items:center;gap:18px;
-  border-bottom:1px solid var(--border2);position:relative;overflow:hidden;
+/* ── counter buttons ── */
+.ctr{display:flex;gap:6px;margin-top:10px}
+.cb{
+  height:38px;padding:0 12px;border-radius:3px;
+  background:rgba(255,255,255,.025);border:1px solid var(--b1);
+  color:var(--t3);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;
+  cursor:pointer;transition:all .12s;white-space:nowrap;
 }
-/* speed lines behind streak number */
-.streak-hero::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:repeating-conic-gradient(
-    from 0deg at 22% 50%,
-    transparent 0deg,transparent 7deg,
-    rgba(204,0,0,.05) 7deg,rgba(204,0,0,.05) 8deg
-  );
-}
-.streak-num{
-  font-size:88px;font-weight:700;color:var(--red);line-height:1;
-  text-shadow:0 0 40px rgba(204,0,0,.5);position:relative;flex-shrink:0;
-}
-.streak-right{position:relative}
-.streak-label{font-size:7px;letter-spacing:5px;color:var(--muted);text-transform:uppercase}
-.streak-mood{font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:3px;line-height:1.3}
-.streak-since{font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:1px}
+.cb.p{flex:1;background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.22);color:var(--gold);font-family:'Bebas Neue',cursive;font-size:13px;letter-spacing:1px}
+.cb:active{opacity:.4;transform:scale(.96)}
 
-/* ── today workout tile ── */
-.tw{
-  margin:10px 14px;padding:14px 16px;
-  background:var(--red3);border:1px solid var(--red2);
-  display:flex;align-items:center;justify-content:space-between;
-  cursor:pointer;position:relative;overflow:hidden;
+/* ── meal grid (quick log) ── */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mbtn{
+  padding:11px 12px;background:rgba(255,255,255,.02);border:1px solid var(--b1);
+  border-radius:3px;color:var(--t1);font-family:'DM Sans',sans-serif;
+  text-align:left;cursor:pointer;transition:all .12s;position:relative;overflow:hidden;
 }
-/* diagonal stripe texture */
-.tw::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(
-    -45deg,transparent,transparent 12px,
-    rgba(204,0,0,.04) 12px,rgba(204,0,0,.04) 13px
-  );
-}
-.tw-lbl{font-size:7px;letter-spacing:5px;color:rgba(200,80,80,.7);text-transform:uppercase;margin-bottom:3px}
-.tw-name{font-size:24px;font-weight:700;letter-spacing:4px;text-transform:uppercase;line-height:1}
-.tw-sub{font-size:9px;color:rgba(232,220,200,.4);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
-.tw-arrow{font-size:22px;color:var(--red);position:relative;transition:transform .2s}
-
-/* ── meal quick buttons ── */
-.meal-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.meal-btn{
-  padding:11px 10px;background:var(--panel2);
-  border:1px solid var(--border2);color:var(--cream);
-  font-family:'Oswald',sans-serif;text-align:left;
-  cursor:pointer;position:relative;overflow:hidden;transition:border-color .15s;
-}
-.meal-btn.on{border-color:var(--red);background:var(--red3)}
-.meal-btn.on .mb-check{opacity:1}
-.mb-check{
-  position:absolute;top:8px;right:8px;
-  font-size:12px;color:var(--red);font-weight:700;opacity:0;transition:opacity .15s;
-}
-.mb-name{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;display:block}
-.mb-cal{font-size:9px;color:var(--muted);display:block;margin-top:2px}
+.mbtn.on{background:rgba(201,168,76,.07);border-color:rgba(201,168,76,.28)}
+.mbtn.on .mc{opacity:1}
+.mc{position:absolute;top:9px;right:9px;font-size:9px;color:var(--gold);font-weight:700;opacity:0;transition:.12s}
+.mn{font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:2px;display:block}
+.mk{font-size:9px;color:var(--t3);display:block;margin-top:2px}
 
 /* ── checklist ── */
 .ci{
-  display:flex;align-items:center;gap:11px;
-  padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;
 }
 .ci:last-child{border-bottom:none}
+.ci:active{opacity:.35}
 .cbox{
-  width:19px;height:19px;border:1px solid var(--border2);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;transition:all .15s;
+  width:18px;height:18px;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,.1);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;transition:all .18s;
 }
-.cbox.on{background:var(--red);border-color:var(--red)}
-.cbox.on::after{content:'✕';font-size:10px;color:#fff;font-weight:700}
-.clabel{font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.cbox.on{background:rgba(201,168,76,.15);border-color:var(--gold)}
+.cbox.on::after{content:'✓';font-size:9px;color:var(--gold);font-weight:700}
+.citem{font-size:11px;font-weight:400;letter-spacing:.2px;color:var(--t2)}
+.citem.struck{color:var(--t4);text-decoration:line-through}
 
 /* ── quote card ── */
 .qcard{
-  margin:10px 14px;padding:20px 16px 16px;
-  background:var(--panel);border:1px solid var(--border2);
+  margin:10px 14px 0;padding:24px 20px 20px;
+  background:rgba(0,0,0,.3);
+  border:1px solid var(--b1);
+  border-left:2px solid rgba(201,168,76,.35);
+  border-radius:0 3px 3px 0;
   position:relative;overflow:hidden;
 }
-.qcard::before{
-  content:'\201C';position:absolute;top:-8px;left:10px;
-  font-family:'Crimson Text',serif;font-size:100px;color:var(--red3);
-  line-height:1;pointer-events:none;
-}
-.qcard::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:radial-gradient(circle,rgba(255,255,255,.01) 1px,transparent 1px);
-  background-size:6px 6px;
-}
-.qtext{
-  font-family:'Crimson Text',serif;font-style:italic;
-  font-size:16px;line-height:1.7;color:var(--cream);
-  padding-left:6px;padding-top:14px;position:relative;z-index:1;
-}
-.qfrom{
-  font-size:8px;letter-spacing:4px;color:var(--red);text-align:right;
-  margin-top:12px;text-transform:uppercase;position:relative;z-index:1;
-}
+.qmark{font-family:'DM Serif Display',serif;font-size:80px;color:rgba(201,168,76,.07);line-height:.6;margin-bottom:8px}
+.qt{font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;line-height:1.8;color:var(--t1)}
+.qf{font-family:'Bebas Neue',cursive;font-size:11px;letter-spacing:4px;color:var(--gold);margin-top:16px}
 
-/* ── counter row ── */
-.ctr{display:flex;gap:7px;margin-top:8px}
-.ctr-btn{
-  height:38px;padding:0 12px;background:var(--panel2);
-  border:1px solid var(--border2);color:var(--cream);
-  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;
-  cursor:pointer;white-space:nowrap;transition:border-color .15s;
-}
-.ctr-btn.primary{background:var(--red);border-color:var(--red);flex:1}
-.ctr-btn:active{opacity:.7}
-
-/* ── workout exercises ── */
-.ex{padding:13px 0;border-bottom:1px solid var(--border)}
+/* ── exercise ── */
+.ex{padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .ex:last-child{border-bottom:none}
-.ex-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
-.ex-name{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.ex-scheme{font-size:10px;color:var(--red);letter-spacing:1px}
-.sets-row{display:flex;gap:5px;flex-wrap:wrap}
-.set-dot{
-  width:36px;height:36px;
-  border:1px solid var(--border2);background:transparent;
-  color:var(--muted);font-family:'Oswald',sans-serif;
-  font-size:9px;letter-spacing:.5px;cursor:pointer;transition:all .15s;
-  display:flex;align-items:center;justify-content:center;
+.exh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.exn{font-family:'Bebas Neue',cursive;font-size:16px;letter-spacing:1px}
+.exs{font-size:9px;color:var(--gold);letter-spacing:3px}
+.srow2{display:flex;gap:5px;flex-wrap:wrap}
+.sd{
+  width:40px;height:40px;border-radius:3px;
+  border:1px solid var(--b1);background:transparent;
+  color:var(--t3);font-family:'Bebas Neue',cursive;font-size:15px;
+  cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;
 }
-.set-dot.on{background:var(--red);border-color:var(--red);color:#fff}
+.sd.on{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.38);color:var(--gold)}
 
-/* ── meal rows (eat screen) ── */
+/* ── meal rows ── */
 .mrow{
-  display:flex;align-items:center;gap:12px;
-  padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;
+  display:flex;align-items:center;gap:13px;
+  padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;
 }
 .mrow:last-child{border-bottom:none}
-.mcheck{
-  width:21px;height:21px;border:1px solid var(--border2);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;transition:all .15s;
+.mchk{
+  width:20px;height:20px;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,.1);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;transition:all .18s;
 }
-.mcheck.on{background:var(--red);border-color:var(--red)}
-.mcheck.on::after{content:'✓';font-size:11px;color:#fff;font-weight:700}
-.minfo{flex:1}
-.mtitle{font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.mdetail{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.4}
-.mnums{text-align:right;flex-shrink:0}
-.mcal{font-size:15px;font-weight:700}
-.mpro{font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:1px}
+.mchk.on{background:rgba(201,168,76,.15);border-color:var(--gold)}
+.mchk.on::after{content:'✓';font-size:10px;color:var(--gold);font-weight:700}
+.mi{flex:1}
+.mt{font-family:'Bebas Neue',cursive;font-size:17px;letter-spacing:2px}
+.md{font-size:10px;color:var(--t3);margin-top:2px;line-height:1.5}
+.mnr{text-align:right;flex-shrink:0}
+.mca{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:1px}
+.mpr{font-size:9px;color:var(--t3);letter-spacing:1px;margin-top:2px}
 
-/* ── progress tiles ── */
-.tgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:0}
+/* ── tiles grid ── */
+.tg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .tile{
-  padding:12px 6px;text-align:center;
-  background:var(--panel2);border:1px solid var(--border2);
+  padding:14px 6px;text-align:center;
+  background:rgba(255,255,255,.02);border:1px solid var(--b1);border-radius:3px;
 }
-.tile-v{font-size:20px;font-weight:700}
-.tile-l{font-size:7px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:3px}
-.tile-s{font-size:8px;color:var(--red);margin-top:1px}
+.tv{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:1px}
+.tl{font-size:7px;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase;margin-top:4px}
+.ts{font-size:8px;color:var(--gold);margin-top:2px}
 
-/* ── input row ── */
-.inrow{display:flex;gap:7px;margin-top:10px}
-.inrow input{
-  flex:1;height:40px;background:var(--panel2);border:1px solid var(--border2);
-  color:var(--cream);font-family:'Oswald',sans-serif;font-size:17px;
-  padding:0 10px;text-align:center;
-}
-.inrow input:focus{outline:none;border-color:var(--red)}
-.inrow button{
-  height:40px;padding:0 14px;background:var(--red);border:none;color:#fff;
-  font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;
-  text-transform:uppercase;cursor:pointer;white-space:nowrap;
-}
-
-/* ── motivation wall ── */
-.wq{padding:20px 16px;border-bottom:1px solid var(--border);position:relative}
-.wq::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--border2)}
-.wq:nth-child(3n+1)::before{background:var(--red)}
-.wq:nth-child(3n+2)::before{background:var(--red2)}
-.wqt{font-family:'Crimson Text',serif;font-style:italic;font-size:16px;line-height:1.7;color:var(--cream)}
-.wqf{font-size:7px;letter-spacing:4px;color:var(--red);text-transform:uppercase;margin-top:10px}
-
-/* ── buttons ── */
+/* ── action button ── */
 .btn{
-  display:block;width:100%;padding:13px;
-  background:transparent;border:1px solid var(--red);
-  color:var(--red);font-family:'Oswald',sans-serif;
-  font-size:11px;font-weight:600;letter-spacing:4px;
-  text-transform:uppercase;cursor:pointer;transition:all .2s;
+  display:block;width:100%;padding:16px;border-radius:3px;
+  background:rgba(255,255,255,.025);border:1px solid var(--b1);
+  color:var(--t3);font-family:'Bebas Neue',cursive;font-size:15px;
+  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .18s;
 }
-.btn.on{background:var(--red);color:#fff}
-.btn.done{background:var(--red2);border-color:var(--red2);color:#fff}
+.btn.done{background:rgba(201,168,76,.09);border-color:rgba(201,168,76,.3);color:var(--gold)}
 
-/* ── rest day ── */
-.rest-block{text-align:center;padding:50px 20px}
-.rest-big{font-size:64px;font-weight:700;color:var(--border2);letter-spacing:8px}
-.rest-sub{font-size:8px;letter-spacing:5px;color:var(--muted);margin-top:8px;text-transform:uppercase}
-.rest-quote{
-  margin:40px 16px 0;padding:18px 14px;
-  border:1px solid var(--border2);border-left:3px solid var(--red2);
-  font-family:'Crimson Text',serif;font-style:italic;
-  font-size:15px;line-height:1.7;color:var(--cream2);
+/* ── rest ── */
+.rblock{text-align:center;padding:60px 20px}
+.rbig{font-family:'Bebas Neue',cursive;font-size:80px;letter-spacing:16px;color:rgba(255,255,255,.04)}
+.rsub{font-size:9px;letter-spacing:5px;color:var(--t3);margin-top:10px;text-transform:uppercase}
+
+/* ── input ── */
+.inr{display:flex;gap:8px;margin-top:14px}
+.inr input{
+  flex:1;height:42px;border-radius:3px;
+  background:rgba(255,255,255,.03);border:1px solid var(--b1);
+  color:var(--t1);font-family:'Bebas Neue',cursive;font-size:18px;padding:0 14px;text-align:center;
+}
+.inr input:focus{outline:none;border-color:rgba(201,168,76,.4)}
+.inr input::placeholder{color:var(--t4)}
+.inr button{
+  height:42px;padding:0 16px;border-radius:3px;
+  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);
+  color:var(--gold);font-family:'Bebas Neue',cursive;
+  font-size:13px;letter-spacing:3px;cursor:pointer;white-space:nowrap;
 }
 
-/* ── bottom nav ── */
+/* ── THE WALL — manga panels ── */
+.wall-intro{padding:22px 18px 14px}
+.wall-title{
+  font-family:'Bebas Neue',cursive;font-size:40px;letter-spacing:4px;line-height:1;
+  background:var(--gg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.wall-sub{font-size:9px;color:var(--t4);letter-spacing:4px;margin-top:8px;text-transform:uppercase}
+
+.panels-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2px;
+  padding:0 14px;
+}
+.wq{
+  padding:18px 15px;
+  background:
+    radial-gradient(circle,rgba(255,252,244,.035) 1px,transparent 1px) 0 0/8px 8px,
+    rgba(255,255,255,.015);
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:0;
+  position:relative;overflow:hidden;
+}
+.wq.wide{grid-column:1/-1}
+.wq-n{
+  font-family:'Bebas Neue',cursive;font-size:9px;letter-spacing:2px;color:var(--t4);
+  display:block;margin-bottom:10px;
+}
+.wqt{
+  font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:13px;line-height:1.75;color:var(--t1);
+}
+.wq.wide .wqt{font-size:15px;line-height:1.8}
+.wqf{
+  font-family:'Bebas Neue',cursive;font-size:10px;letter-spacing:3px;
+  color:var(--gold);margin-top:12px;display:block;
+}
+
+/* ── nav ── */
 #nav{
-  position:fixed;bottom:0;left:0;right:0;height:60px;
-  background:var(--bg);border-top:1px solid var(--border2);
-  display:flex;z-index:100;
+  position:fixed;bottom:0;left:0;right:0;height:64px;
+  background:rgba(7,6,10,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--b1);display:flex;z-index:100;
 }
 .nb{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:2px;
-  border:none;background:none;color:var(--muted);
-  font-family:'Oswald',sans-serif;font-size:7px;letter-spacing:2px;
-  text-transform:uppercase;cursor:pointer;transition:color .15s;padding:0;
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  border:none;background:none;color:var(--t4);
+  font-family:'Bebas Neue',cursive;font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;transition:color .18s;padding:0;
+  position:relative;
 }
-.nb.on{color:var(--red)}
-.ni{font-size:16px;line-height:1}
+.nb.on{color:var(--gold)}
+.nb.on::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:28px;height:1px;background:var(--gold);
+}
+.ni{font-size:13px;line-height:1;font-family:'DM Sans',sans-serif;letter-spacing:0}
 
 /* ── toast ── */
 #toast{
-  position:fixed;bottom:70px;left:50%;transform:translateX(-50%);
-  background:var(--red);color:#fff;
-  padding:8px 16px;
-  font-size:8px;letter-spacing:3px;text-transform:uppercase;
-  opacity:0;transition:opacity .25s;pointer-events:none;
-  white-space:nowrap;z-index:300;
+  position:fixed;bottom:76px;left:50%;transform:translateX(-50%);
+  background:rgba(7,6,10,.94);color:var(--gold);
+  border:1px solid rgba(201,168,76,.25);border-radius:3px;
+  padding:9px 20px;backdrop-filter:blur(12px);
+  font-family:'Bebas Neue',cursive;font-size:12px;letter-spacing:4px;
+  opacity:0;transition:opacity .22s;pointer-events:none;white-space:nowrap;z-index:300;
 }
 #toast.show{opacity:1}
 
 /* ── splash ── */
 #splash{
   position:fixed;inset:0;background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:500;transition:opacity .7s .2s;
+  display:flex;align-items:center;justify-content:center;
+  z-index:500;transition:opacity .9s .2s;
 }
 #splash.gone{opacity:0;pointer-events:none}
-.sp-eyebrow{font-size:8px;letter-spacing:7px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
-.sp-title{font-size:44px;font-weight:700;letter-spacing:8px;text-transform:uppercase;line-height:1}
-.sp-line{width:50px;height:2px;background:var(--red);margin:18px auto}
-.sp-sub{font-size:8px;letter-spacing:5px;color:var(--muted);text-transform:uppercase}
-/* speed lines on splash */
+.sp-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);
+  width:640px;height:640px;
+  background:radial-gradient(ellipse,rgba(201,168,76,.075) 0%,transparent 60%);
+  pointer-events:none;
+}
+/* horizontal ruled lines like manga page */
 .sp-lines{
   position:absolute;inset:0;pointer-events:none;
-  background:repeating-conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,transparent 10deg,
-    rgba(204,0,0,.025) 10deg,rgba(204,0,0,.025) 11deg
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,transparent 30px,
+    rgba(201,168,76,.016) 30px,rgba(201,168,76,.016) 31px
   );
 }
-
-/* chart */
-.chart-svg{width:100%;height:90px;display:block;margin-top:10px}
+.sp-eyebrow{
+  font-family:'Bebas Neue',cursive;font-size:9px;letter-spacing:9px;
+  color:rgba(201,168,76,.38);margin-bottom:20px;display:block;
+}
+.sp-title{
+  font-family:'Bebas Neue',cursive;
+  font-size:clamp(60px,18vw,82px);letter-spacing:8px;line-height:.9;text-align:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.95) 0%,rgba(201,168,76,.9) 40%,rgba(255,255,255,.6) 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 3s linear infinite;
+}
+.sp-divider{display:flex;align-items:center;gap:12px;margin:24px auto;width:160px}
+.sp-line{flex:1;height:1px;background:rgba(201,168,76,.28)}
+.sp-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);flex-shrink:0}
+.sp-sub{font-size:10px;letter-spacing:4px;color:rgba(255,255,255,.16);text-transform:uppercase}
 </style>
 </head>
 <body>
 
 <div id="splash">
+  <div class="sp-glow"></div>
   <div class="sp-lines"></div>
   <div style="text-align:center;position:relative;z-index:1">
-    <div class="sp-eyebrow">The War Journal</div>
+    <span class="sp-eyebrow">The War Journal</span>
     <div class="sp-title">PROJECT<br>ASCEND</div>
-    <div class="sp-line"></div>
-    <div class="sp-sub">Sahil · Day <span id="splash-day">1</span> of Transformation</div>
+    <div class="sp-divider"><div class="sp-line"></div><div class="sp-diamond"></div><div class="sp-line"></div></div>
+    <div class="sp-sub">Sahil · Day <span id="sd">1</span></div>
   </div>
 </div>
 
@@ -357,616 +417,420 @@ body::after{
   <div id="s-eat" class="screen"></div>
   <div id="s-progress" class="screen"></div>
   <div id="s-wall" class="screen"></div>
-
   <nav id="nav">
-    <button class="nb on" data-tab="home" onclick="switchTab('home')"><span class="ni">⌂</span>HOME</button>
-    <button class="nb" data-tab="train" onclick="switchTab('train')"><span class="ni">⚔</span>TRAIN</button>
-    <button class="nb" data-tab="eat" onclick="switchTab('eat')"><span class="ni">◈</span>EAT</button>
-    <button class="nb" data-tab="progress" onclick="switchTab('progress')"><span class="ni">◉</span>PROGRESS</button>
-    <button class="nb" data-tab="wall" onclick="switchTab('wall')"><span class="ni">✦</span>WALL</button>
+    <button class="nb on" data-tab="home" onclick="go('home')"><span class="ni">今</span>HOME</button>
+    <button class="nb" data-tab="train" onclick="go('train')"><span class="ni">剣</span>TRAIN</button>
+    <button class="nb" data-tab="eat" onclick="go('eat')"><span class="ni">食</span>EAT</button>
+    <button class="nb" data-tab="progress" onclick="go('progress')"><span class="ni">体</span>BODY</button>
+    <button class="nb" data-tab="wall" onclick="go('wall')"><span class="ni">壁</span>WALL</button>
   </nav>
 </div>
-
 <div id="toast"></div>
 
 <script>
-// ─── SERVICE WORKER ──────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-// ─── CONSTANTS ───────────────────────────────────────────────
-const START = '2026-04-11';
-const TGT = { cal: 1850, pro: 140, steps: 10000, water: 12, sleep: 7 };
-const SCHEDULE = ['push', 'pull', 'walk', 'push', 'pullcore', 'rest', 'rest'];
-
-const WK = {
-  push: {
-    name: 'PUSH', sub: 'Chest · Shoulders · Triceps',
-    ex: [
-      { n: 'Incline DB Press',           s: 4, r: '10' },
-      { n: 'Cable Chest Fly',            s: 3, r: '12' },
-      { n: 'Shoulder Press Machine',     s: 3, r: '10' },
-      { n: 'Lateral Raises + Drop Set',  s: 3, r: '12' },
-      { n: 'Tricep Pushdown',            s: 3, r: '12' }
-    ]
-  },
-  pull: {
-    name: 'PULL', sub: 'Back · Biceps',
-    ex: [
-      { n: 'Weighted Pull-ups',     s: 5, r: 'MAX' },
-      { n: 'Wide Lat Pulldown',     s: 4, r: '10' },
-      { n: 'Cable Rows',            s: 3, r: '12' },
-      { n: 'Single Arm DB Row',     s: 3, r: '12 each' },
-      { n: 'Face Pulls',            s: 3, r: '15' }
-    ]
-  },
-  walk: {
-    name: 'WALK + CORE', sub: '10,000 Steps · Abs',
-    ex: [
-      { n: 'Hanging Leg Raises', s: 4, r: '15' },
-      { n: 'Cable Crunches',     s: 3, r: '15' },
-      { n: 'Plank',              s: 3, r: '60s' }
-    ]
-  },
-  pullcore: {
-    name: 'PULL + CORE', sub: 'Back · Biceps · Abs',
-    ex: [
-      { n: 'Pull-ups',              s: 5, r: 'MAX' },
-      { n: 'Lat Pulldown',          s: 3, r: '10' },
-      { n: 'DB Rows',               s: 3, r: '12' },
-      { n: 'Hanging Knee Raises',   s: 3, r: '15' },
-      { n: 'Plank Variations',      s: 3, r: '45s' }
-    ]
-  },
-  rest: { name: 'REST', sub: 'Walk · Recover · Sleep', ex: [] }
+const START='2026-04-11';
+const TGT={cal:1850,pro:140,steps:10000,water:12,sleep:7};
+const SCHED=['push','pull','walk','push','pullcore','rest','rest'];
+const WK={
+  push:{name:'PUSH',sub:'Chest · Shoulders · Triceps',ex:[
+    {n:'Incline DB Press',s:4,r:'10'},{n:'Cable Chest Fly',s:3,r:'12'},
+    {n:'Shoulder Press Machine',s:3,r:'10'},{n:'Lateral Raises + Drop Set',s:3,r:'12'},
+    {n:'Tricep Pushdown',s:3,r:'12'}]},
+  pull:{name:'PULL',sub:'Back · Biceps',ex:[
+    {n:'Weighted Pull-ups',s:5,r:'MAX'},{n:'Wide Lat Pulldown',s:4,r:'10'},
+    {n:'Cable Rows',s:3,r:'12'},{n:'Single Arm DB Row',s:3,r:'12 each'},
+    {n:'Face Pulls',s:3,r:'15'}]},
+  walk:{name:'WALK + CORE',sub:'10,000 Steps · Abs',ex:[
+    {n:'Hanging Leg Raises',s:4,r:'15'},{n:'Cable Crunches',s:3,r:'15'},
+    {n:'Plank',s:3,r:'60s'}]},
+  pullcore:{name:'PULL + CORE',sub:'Back · Biceps · Abs',ex:[
+    {n:'Pull-ups',s:5,r:'MAX'},{n:'Lat Pulldown',s:3,r:'10'},
+    {n:'DB Rows',s:3,r:'12'},{n:'Hanging Knee Raises',s:3,r:'15'},
+    {n:'Plank Variations',s:3,r:'45s'}]},
+  rest:{name:'REST',sub:'Walk · Recover · Sleep',ex:[]}
 };
-
-const MEALS = [
-  { id: 0, name: 'BREAKFAST', detail: '4 boiled eggs · banana · black chai',    cal: 330, pro: 28 },
-  { id: 1, name: 'LUNCH',     detail: 'Dal · 2 rotis · sabzi',                  cal: 500, pro: 20 },
-  { id: 2, name: 'SNACK',     detail: '200g plain dahi · 30g peanuts',           cal: 250, pro: 14 },
-  { id: 3, name: 'DINNER',    detail: '200g chicken · rice or 2 rotis',          cal: 580, pro: 46 }
+const MEALS=[
+  {id:0,name:'BREAKFAST',detail:'4 boiled eggs · banana · black chai',cal:330,pro:28},
+  {id:1,name:'LUNCH',detail:'Dal · 2 rotis · sabzi',cal:500,pro:20},
+  {id:2,name:'SNACK',detail:'200g plain dahi · 30g peanuts',cal:250,pro:14},
+  {id:3,name:'DINNER',detail:'200g chicken · rice or 2 rotis',cal:580,pro:46}
+];
+const QQ=[
+  {t:"If you're always worried about crushing the ants beneath your feet... you couldn't walk. Could you?",f:"GUTS — BERSERK"},
+  {t:"A dream... It's something you do for yourself, not for others.",f:"GUTS — BERSERK"},
+  {t:"If it means risking my life, I will claw my way through.",f:"GUTS — BERSERK"},
+  {t:"Struggle for your life, or die in place.",f:"GUTS — BERSERK"},
+  {t:"There is no such thing as a painless lesson. They just don't exist.",f:"GUTS — BERSERK"},
+  {t:"No matter how hard or impossible it is, never lose sight of your goal.",f:"GUTS — BERSERK"},
+  {t:"Even if we painstakingly piece together something lost, it doesn't mean things will ever go back to how they were.",f:"GUTS — BERSERK"},
+  {t:"I have no enemies. No one does. There is no one that it is okay to hurt.",f:"THORFINN — VINLAND SAGA"},
+  {t:"A real warrior doesn't need a sword.",f:"THORFINN — VINLAND SAGA"},
+  {t:"Live. Keep moving forward. That is all.",f:"THORFINN — VINLAND SAGA"},
+  {t:"I was weak. And because I was weak, I hurt the people around me. I will never stop regretting that.",f:"THORFINN — VINLAND SAGA"},
+  {t:"Under the vast sky, I realized — there is nothing I cannot achieve.",f:"MUSASHI — VAGABOND"},
+  {t:"The only thing I can do is keep moving forward. No matter what gets in my way.",f:"MUSASHI — VAGABOND"},
+  {t:"I am still immature. That is why I swing the sword.",f:"MUSASHI — VAGABOND"},
+  {t:"To know yourself is to know the enemy. Know yourself, and you need not fear battle.",f:"MUSASHI — VAGABOND"}
 ];
 
-const QUOTES = [
-  { t: "If you're always worried about crushing the ants beneath your feet... you couldn't walk. Could you?", f: "GUTS — BERSERK" },
-  { t: "A dream... It's something you do for yourself, not for others.", f: "GUTS — BERSERK" },
-  { t: "If it means risking my life, I will claw my way through.", f: "GUTS — BERSERK" },
-  { t: "Struggle for your life, or die in place.", f: "GUTS — BERSERK" },
-  { t: "Even if we painstakingly piece together something lost, it doesn't mean things will ever go back to how they were.", f: "GUTS — BERSERK" },
-  { t: "There is no such thing as a painless lesson. They just don't exist.", f: "GUTS — BERSERK" },
-  { t: "No matter how hard or impossible it is, never lose sight of your goal.", f: "GUTS — BERSERK" },
-  { t: "I have no enemies. No one does. There is no one that it is okay to hurt.", f: "THORFINN — VINLAND SAGA" },
-  { t: "A real warrior doesn't need a sword.", f: "THORFINN — VINLAND SAGA" },
-  { t: "Live. Keep moving forward. That is all.", f: "THORFINN — VINLAND SAGA" },
-  { t: "I was weak. And because I was weak, I hurt the people around me. I will never stop regretting that.", f: "THORFINN — VINLAND SAGA" },
-  { t: "Under the vast sky, I realized — there is nothing I cannot achieve.", f: "MUSASHI — VAGABOND" },
-  { t: "The only thing I can do is keep moving forward. No matter what gets in my way.", f: "MUSASHI — VAGABOND" },
-  { t: "I am still immature. That is why I swing the sword.", f: "MUSASHI — VAGABOND" },
-  { t: "To know yourself is to know the enemy. Know yourself, and you need not fear battle.", f: "MUSASHI — VAGABOND" }
-];
-
-// ─── DATA ────────────────────────────────────────────────────
-const KEY = 'ascend_v1';
+const KEY='ascend_v1';
 let D;
-
-function load() {
-  const r = localStorage.getItem(KEY);
-  D = r ? JSON.parse(r) : { weights: [{ d: START, v: 84 }], waists: [], entries: {} };
+function load(){const r=localStorage.getItem(KEY);D=r?JSON.parse(r):{weights:[{d:START,v:84}],waists:[],entries:{}};}
+function save(){localStorage.setItem(KEY,JSON.stringify(D));}
+function td(){const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
+function ent(date){
+  const k=date||td();
+  if(!D.entries[k])D.entries[k]={meals:[false,false,false,false],workout:false,sets:{},steps:0,water:0,sleep:0,cl:{am:false,pm:false,noliq:false,supps:false}};
+  save();return D.entries[k];
 }
-
-function save() { localStorage.setItem(KEY, JSON.stringify(D)); }
-
-function td() { const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); }
-
-function entry(date) {
-  const k = date || td();
-  if (!D.entries[k]) {
-    D.entries[k] = {
-      meals: [false, false, false, false],
-      workout: false,
-      sets: {}, // key: `${wkKey}_${exIdx}` → count
-      steps: 0, water: 0, sleep: 0,
-      cl: { am: false, pm: false, noliq: false, supps: false }
-    };
-    save();
-  }
-  return D.entries[k];
+function dayN(date){
+  const s=new Date(START+'T00:00:00'),d=new Date((date||td())+'T00:00:00');
+  return Math.floor((d-s)/86400000)+1;
 }
-
-function dayN(date) {
-  const s = new Date(START + 'T00:00:00');
-  const d = new Date((date || td()) + 'T00:00:00');
-  return Math.floor((d - s) / 86400000) + 1;
-}
-
-function wkKey() { return SCHEDULE[((Math.max(1,dayN()) - 1) % 7)]; }
-
-function streak() {
-  let s = 0, d = new Date(td() + 'T00:00:00');
-  for (let i = 0; i < 2000; i++) {
-    const k = d.toISOString().slice(0, 10);
-    const e = D.entries[k];
-    if (!e || (!e.meals.some(Boolean) && !e.workout)) break;
-    s++; d.setDate(d.getDate() - 1);
+function wkKey(){return SCHED[((Math.max(1,dayN())-1)%7)];}
+function streak(){
+  let s=0,d=new Date(td()+'T00:00:00');
+  for(let i=0;i<2000;i++){
+    const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const e=D.entries[k];
+    if(!e||(!e.meals.some(Boolean)&&!e.workout))break;
+    s++;d.setDate(d.getDate()-1);
   }
   return s;
 }
-
-function macros() {
-  const e = entry(); let cal = 0, pro = 0;
-  MEALS.forEach((m, i) => { if (e.meals[i]) { cal += m.cal; pro += m.pro; } });
-  return { cal, pro };
+function macros(){const e=ent();let cal=0,pro=0;MEALS.forEach((m,i)=>{if(e.meals[i]){cal+=m.cal;pro+=m.pro;}});return{cal,pro};}
+function glowScore(){
+  const e=ent(),m=macros();let sc=0;
+  if(e.sleep>=7)sc+=25;else if(e.sleep>=6)sc+=15;else if(e.sleep>=5)sc+=8;
+  sc+=Math.round(Math.min(1,e.water/TGT.water)*20);
+  if(e.cl.am)sc+=10;if(e.cl.pm)sc+=10;
+  if(e.cl.noliq)sc+=10;if(e.workout)sc+=15;
+  if(m.pro>=TGT.pro*.8)sc+=10;
+  return sc;
 }
-
-function quote() { return QUOTES[(dayN() - 1) % QUOTES.length]; }
-function pct(v, t) { return Math.min(100, Math.round(v / t * 100)); }
-function fmtDate(d) {
-  return new Date(d + 'T00:00:00')
-    .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    .toUpperCase();
+function glowLbl(sc){
+  if(sc>=90)return'Exceptional';if(sc>=75)return'Glowing';
+  if(sc>=55)return'Building';if(sc>=35)return'Getting There';return'Start The Day';
 }
-
-// ─── TOAST ───────────────────────────────────────────────────
-let _tt;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 1800);
+function glowDesc(sc){
+  if(sc>=90)return'Every variable dialled in. This is what peak looks like.';
+  if(sc>=75)return'Skin, body, energy — all trending up today.';
+  if(sc>=55)return'Good day. Stack more and watch the face change.';
+  if(sc>=35)return'Hit your sleep and skincare to unlock the next tier.';
+  return'Every metric you log moves your attractiveness score.';
 }
-
-// ─── TABS ────────────────────────────────────────────────────
-let activeTab = 'home';
-function switchTab(id) {
-  activeTab = id;
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(n => n.classList.remove('on'));
-  document.getElementById('s-' + id).classList.add('active');
-  document.querySelector('[data-tab="' + id + '"]').classList.add('on');
-  render();
+function pct(v,t){return Math.min(100,Math.round(v/t*100));}
+function fmtD(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}).toUpperCase();}
+function smood(s){
+  if(s===0)return'The arc begins.';if(s===1)return'First brick laid.';
+  if(s<4)return'The blade sharpens.';if(s<7)return'Something is building.';
+  if(s<14)return'One week. Unshaken.';if(s<30)return'The body is changing.';
+  if(s<60)return'A different person now.';return'Legendary.';
 }
-function render() {
-  ({ home: rHome, train: rTrain, eat: rEat, progress: rProgress, wall: rWall })[activeTab]();
+function ring(sc){
+  const r=58,circ=2*Math.PI*r,fill=circ-(sc/100)*circ;
+  const col=sc>=75?'#f2cc6b':sc>=50?'#c9a84c':'#7a6128';
+  return`<svg viewBox="0 0 156 156" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="78" cy="78" r="${r}" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="5"/>
+    <circle cx="78" cy="78" r="${r}" fill="none" stroke="${col}" stroke-width="5"
+      stroke-linecap="round" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${fill.toFixed(1)}"
+      style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+  </svg>`;
 }
-
-// ─── HELPERS ─────────────────────────────────────────────────
-function bar(label, val, target, unit) {
-  const p = pct(val, target), done = val >= target;
-  return `<div class="stat">
-    <div class="stat-hd">
-      <span class="stat-name">${label}</span>
-      <span class="stat-val">${val}<em> / ${target}${unit}</em></span>
-    </div>
-    <div class="bar"><div class="bf${done ? ' done' : ''}" style="width:${p}%"></div></div>
-  </div>`;
+function bar(label,val,target,unit){
+  const p=pct(val,target),done=val>=target;
+  return`<div class="stat"><div class="srow"><span class="sname">${label}</span><span class="sval">${val}<em> / ${target}${unit}</em></span></div><div class="bar"><div class="bf${done?' done':''}" style="width:${p}%"></div></div></div>`;
 }
-
-function streakMood(s) {
-  if (s === 0) return 'The war begins.';
-  if (s === 1) return 'Day one. Always day one.';
-  if (s < 4)  return 'The blade is being sharpened.';
-  if (s < 7)  return 'You are building something real.';
-  if (s < 14) return 'One week. Unshaken.';
-  if (s < 30) return 'The body is changing.';
-  if (s < 60) return 'A month of war. Legendary.';
-  return 'You are a different person now.';
-}
-
-// ─── HOME ────────────────────────────────────────────────────
-function rHome() {
-  const e = entry(), m = macros(), s = streak(), dn = dayN();
-  const wk = wkKey(), wkd = WK[wk], q = quote();
-  const cl = [
-    { k: 'am',    label: 'Skincare AM (wash + niacinamide + SPF)' },
-    { k: 'pm',    label: 'Skincare PM (wash + retinol + moisturiser)' },
-    { k: 'noliq', label: 'Zero liquid calories' },
-    { k: 'supps', label: 'Supplements / protein powder' }
-  ];
-  const clDone = Object.values(e.cl).filter(Boolean).length;
-
-  document.getElementById('s-home').innerHTML = `
-    <div class="sh">
-      <div class="sh-sub">Project Ascend · Day ${dn}</div>
-      <div class="sh-title">${fmtDate(td())}</div>
-    </div>
-
-    <div class="streak-hero">
-      <div class="streak-num">${s}</div>
-      <div class="streak-right">
-        <div class="streak-label">Day Streak</div>
-        <div class="streak-mood">${streakMood(s)}</div>
-        <div class="streak-since">${fmtDate(START)} → NOW</div>
-      </div>
-    </div>
-
-    <div class="tw" onclick="switchTab('train')">
-      <div>
-        <div class="tw-lbl">Today's Chapter</div>
-        <div class="tw-name">${wkd.name}</div>
-        <div class="tw-sub">${wkd.sub}</div>
-      </div>
-      <div class="tw-arrow">${e.workout ? '✓' : '→'}</div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Nutrition</div>
-      ${bar('Calories', m.cal, TGT.cal, ' kcal')}
-      ${bar('Protein', m.pro, TGT.pro, 'g')}
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Quick Log Meals</div>
-      <div class="meal-grid">
-        ${MEALS.map(ml => `
-          <button class="meal-btn${e.meals[ml.id] ? ' on' : ''}" onclick="togMeal(${ml.id})">
-            <span class="mb-check">✓</span>
-            <span class="mb-name">${ml.name}</span>
-            <span class="mb-cal">${ml.cal} kcal · ${ml.pro}g</span>
-          </button>
-        `).join('')}
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Movement</div>
-      ${bar('Steps', e.steps, TGT.steps, '')}
-      <div class="ctr">
-        <button class="ctr-btn" onclick="adj('steps',-500)">−500</button>
-        <button class="ctr-btn primary" onclick="adj('steps',1000)">+1000 steps</button>
-        <button class="ctr-btn" onclick="adj('steps',500)">+500</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Hydration</div>
-      ${bar('Water', e.water, TGT.water, ' glasses')}
-      <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:3px">${e.water} × 250ml = ${(e.water * 0.25).toFixed(2)}L</div>
-      <div class="ctr">
-        <button class="ctr-btn" onclick="adj('water',-1)">−1</button>
-        <button class="ctr-btn primary" onclick="adj('water',1)">+1 glass (250ml)</button>
-        <button class="ctr-btn" onclick="adj('water',2)">+2</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Sleep Last Night</div>
-      ${bar('Sleep', e.sleep, TGT.sleep, 'h')}
-      <div style="margin-top:3px;font-size:9px;color:${e.sleep >= 7 ? '#3d7a38' : e.sleep >= 5 ? 'var(--cream2)' : 'var(--red)'};letter-spacing:1px">
-        ${e.sleep >= 7 ? '✓ Dark circles fading. Skin recovering.' : e.sleep >= 5 ? '⚠ Below target. Push to 7h.' : e.sleep > 0 ? '✕ Sleep debt. Face + fat loss both suffer.' : 'Log how many hours you slept.'}
-      </div>
-      <div class="ctr" style="margin-top:8px">
-        <button class="ctr-btn" onclick="adj('sleep',-0.5)">−½h</button>
-        <button class="ctr-btn primary" onclick="adj('sleep',0.5)">+½ hour</button>
-        <button class="ctr-btn" onclick="adj('sleep',1)">+1h</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Daily Checklist (${clDone}/4)</div>
-      ${cl.map(ci => `
-        <div class="ci" onclick="togCl('${ci.k}')">
-          <div class="cbox${e.cl[ci.k] ? ' on' : ''}"></div>
-          <span class="clabel">${ci.label}</span>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="qcard">
-      <div class="qtext">"${q.t}"</div>
-      <div class="qfrom">— ${q.f}</div>
-    </div>
-  `;
-}
-
-// ─── TRAIN ───────────────────────────────────────────────────
-function rTrain() {
-  const e = entry(), wk = wkKey(), wkd = WK[wk], dn = dayN();
-
-  if (wk === 'rest') {
-    const rq = QUOTES[dn % QUOTES.length];
-    document.getElementById('s-train').innerHTML = `
-      <div class="sh">
-        <div class="sh-sub">Chapter ${dn}</div>
-        <div class="sh-title">Rest Day</div>
-      </div>
-      <div class="rest-block">
-        <div class="rest-big">REST</div>
-        <div class="rest-sub">Walk · Recover · Sleep 7+ hours</div>
-        <div class="rest-quote">"${rq.t}"<br><span style="font-size:8px;letter-spacing:3px;color:var(--red);text-transform:uppercase;margin-top:8px;display:block">— ${rq.f}</span></div>
-      </div>
-    `;
-    return;
-  }
-
-  const totalSets = wkd.ex.reduce((sum, ex) => sum + ex.s, 0);
-  const doneSets  = wkd.ex.reduce((sum, ex, i) => sum + Math.min(e.sets[wk + '_' + i] || 0, ex.s), 0);
-  const p = pct(doneSets, totalSets);
-
-  document.getElementById('s-train').innerHTML = `
-    <div class="sh">
-      <div class="sh-sub">Chapter ${dn} · ${wkd.sub}</div>
-      <div class="sh-title">${wkd.name}</div>
-    </div>
-
-    <div style="padding:12px 16px 4px">
-      <div class="stat-hd" style="margin-bottom:5px">
-        <span class="stat-name">Session Progress</span>
-        <span class="stat-val">${doneSets}<em> / ${totalSets} sets</em></span>
-      </div>
-      <div class="bar" style="height:4px">
-        <div class="bf${p >= 100 ? ' done' : ''}" style="width:${p}%"></div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Exercises</div>
-      ${wkd.ex.map((ex, i) => {
-        const done = e.sets[wk + '_' + i] || 0;
-        return `
-          <div class="ex">
-            <div class="ex-hd">
-              <span class="ex-name">${ex.n}</span>
-              <span class="ex-scheme">${ex.s} × ${ex.r}</span>
-            </div>
-            <div class="sets-row">
-              ${Array.from({length: ex.s}, (_, j) => `
-                <button class="set-dot${j < done ? ' on' : ''}" onclick="togSet('${wk}',${i},${ex.s},${j})">
-                  ${j < done ? '✓' : j + 1}
-                </button>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      }).join('')}
-    </div>
-
-    <div style="padding:0 14px 14px">
-      <button class="btn${e.workout ? ' done' : ''}" onclick="togWorkout()">
-        ${e.workout ? '✓ SESSION COMPLETE — WARRIOR' : 'MARK SESSION COMPLETE'}
-      </button>
-    </div>
-  `;
-}
-
-// ─── EAT ─────────────────────────────────────────────────────
-function rEat() {
-  const e = entry(); let cal = 0, pro = 0;
-  e.meals.forEach((on, i) => { if (on) { cal += MEALS[i].cal; pro += MEALS[i].pro; } });
-  const remaining = TGT.cal - cal;
-
-  document.getElementById('s-eat').innerHTML = `
-    <div class="sh">
-      <div class="sh-sub">Nutrition · Day ${dayN()}</div>
-      <div class="sh-title">${cal} / ${TGT.cal} kcal</div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Today's Total</div>
-      ${bar('Calories', cal, TGT.cal, ' kcal')}
-      ${bar('Protein', pro, TGT.pro, 'g')}
-      <div style="margin-top:8px;font-size:9px;color:var(--muted);letter-spacing:1px">
-        ${remaining > 0 ? remaining + ' kcal remaining' : 'Target reached.'}
-        &nbsp;·&nbsp; ${TGT.pro - pro > 0 ? (TGT.pro - pro) + 'g protein to go' : 'Protein hit ✓'}
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Meals</div>
-      ${MEALS.map(m => `
-        <div class="mrow" onclick="togMeal(${m.id})">
-          <div class="mcheck${e.meals[m.id] ? ' on' : ''}"></div>
-          <div class="minfo">
-            <div class="mtitle">${m.name}</div>
-            <div class="mdetail">${m.detail}</div>
-          </div>
-          <div class="mnums">
-            <div class="mcal">${m.cal}</div>
-            <div class="mpro">${m.pro}g protein</div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Rules</div>
-      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;line-height:2.2;text-transform:uppercase">
-        <div>✕ &nbsp;No packaged snacks</div>
-        <div>✕ &nbsp;No liquid calories</div>
-        <div>✓ &nbsp;Hungry? Dahi or 30g peanuts</div>
-        <div>✓ &nbsp;Log everything in MyFitnessPal</div>
-      </div>
-    </div>
-  `;
-}
-
-// ─── PROGRESS ────────────────────────────────────────────────
-function rProgress() {
-  const dn = dayN();
-  const lastW = D.weights[D.weights.length - 1]?.v ?? 84;
-  const lastWaist = D.waists.length ? D.waists[D.waists.length - 1].v : null;
-  const lost = (84 - lastW).toFixed(1);
-  const toGo = (lastW - 71).toFixed(1);
-  const pctLost = pct(84 - lastW, 84 - 71);
-
-  document.getElementById('s-progress').innerHTML = `
-    <div class="sh">
-      <div class="sh-sub">Transformation · Day ${dn} of 150</div>
-      <div class="sh-title">Progress Log</div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Weight — 84kg → 71kg</div>
-      <div class="tgrid">
-        <div class="tile">
-          <div class="tile-v">${lastW}<span style="font-size:11px">kg</span></div>
-          <div class="tile-l">Current</div>
-        </div>
-        <div class="tile">
-          <div class="tile-v" style="color:${parseFloat(lost) > 0 ? '#3d7a38' : 'var(--muted)'}">−${Math.abs(parseFloat(lost))}</div>
-          <div class="tile-l">Lost (kg)</div>
-          <div class="tile-s">${pctLost}% to goal</div>
-        </div>
-        <div class="tile">
-          <div class="tile-v">${toGo}</div>
-          <div class="tile-l">To Goal</div>
-          <div class="tile-s">target 71kg</div>
-        </div>
-      </div>
-      ${weightChart()}
-      <div class="inrow">
-        <input id="wi" type="number" placeholder="${lastW}" step="0.1" min="40" max="200">
-        <button onclick="logW()">LOG WEIGHT</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Waist Circumference</div>
-      <div class="tgrid">
-        <div class="tile">
-          <div class="tile-v">${lastWaist ? lastWaist + '<span style="font-size:11px">cm</span>' : '—'}</div>
-          <div class="tile-l">Current</div>
-        </div>
-        <div class="tile">
-          <div class="tile-v" style="color:var(--muted)">~90</div>
-          <div class="tile-l">Est. Start</div>
-        </div>
-        <div class="tile">
-          <div class="tile-v" style="color:var(--muted)">~78</div>
-          <div class="tile-l">Target</div>
-        </div>
-      </div>
-      <div class="inrow">
-        <input id="waisti" type="number" placeholder="90" step="0.5" min="40" max="200">
-        <button onclick="logWaist()">LOG WAIST</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Journey</div>
-      <div class="tgrid">
-        <div class="tile">
-          <div class="tile-v">${dn}</div>
-          <div class="tile-l">Days In</div>
-        </div>
-        <div class="tile">
-          <div class="tile-v">${Math.max(0, 150 - dn)}</div>
-          <div class="tile-l">Days Left</div>
-          <div class="tile-s">to 150 days</div>
-        </div>
-        <div class="tile">
-          <div class="tile-v">${streak()}</div>
-          <div class="tile-l">Streak</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="plabel">Weekly Photo Check</div>
-      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;line-height:2">
-        Every Sunday morning — front + side.<br>
-        Same spot. Same light. No filter.<br>
-        The camera doesn't lie. Your eyes adapt.
-      </div>
-    </div>
-  `;
-}
-
-function weightChart() {
-  if (D.weights.length < 2) {
-    return '<div style="height:50px;display:flex;align-items:center;justify-content:center;font-size:8px;letter-spacing:3px;color:var(--muted)">LOG MORE WEIGHTS TO SEE CHART</div>';
-  }
-  const wts = D.weights.slice(-20);
-  const vals = wts.map(x => x.v);
-  const mn = Math.min(...vals) - 0.5, mx = Math.max(...vals) + 0.5;
-  const W = 280, H = 70;
-  const pts = vals.map((v, i) => {
-    const x = (i / (vals.length - 1)) * (W - 20) + 10;
-    const y = H - ((v - mn) / (mx - mn)) * (H - 16) - 8;
-    return x + ',' + y;
-  }).join(' ');
-  const last = pts.split(' ').pop().split(',');
-  return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}">
-    <polyline points="${pts}" fill="none" stroke="#cc0000" stroke-width="1.5" stroke-linejoin="round"/>
-    <circle cx="${last[0]}" cy="${last[1]}" r="3" fill="#cc0000"/>
-    <text x="4" y="10" fill="#333" font-size="7" font-family="Oswald">${mx.toFixed(1)}</text>
-    <text x="4" y="${H}" fill="#333" font-size="7" font-family="Oswald">${mn.toFixed(1)}</text>
+function wChart(){
+  if(D.weights.length<2)return`<div style="height:44px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.1)">LOG MORE TO SEE CHART</div>`;
+  const wts=D.weights.slice(-20),vals=wts.map(x=>x.v);
+  const mn=Math.min(...vals)-.5,mx=Math.max(...vals)+.5,W=280,H=66;
+  const pts=vals.map((v,i)=>((i/(vals.length-1))*(W-20)+10)+','+(H-((v-mn)/(mx-mn))*(H-16)-8)).join(' ');
+  const lp=pts.split(' ').pop().split(',');
+  return`<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin-top:14px;display:block">
+    <defs><linearGradient id="gg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7a6128"/><stop offset="100%" stop-color="#f2cc6b"/></linearGradient></defs>
+    <polyline points="${pts}" fill="none" stroke="url(#gg2)" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="${lp[0]}" cy="${lp[1]}" r="3" fill="#f2cc6b"/>
+    <text x="4" y="10" fill="rgba(255,255,255,.16)" font-size="8" font-family="DM Sans">${mx.toFixed(1)}</text>
+    <text x="4" y="${H}" fill="rgba(255,255,255,.16)" font-size="8" font-family="DM Sans">${mn.toFixed(1)}</text>
   </svg>`;
 }
 
-// ─── WALL ────────────────────────────────────────────────────
-function rWall() {
-  document.getElementById('s-wall').innerHTML = `
-    <div class="sh">
-      <div class="sh-sub">The Warrior's Grimoire</div>
-      <div class="sh-title">Motivation Wall</div>
-    </div>
-    <div style="padding:14px 16px 4px;font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase">
-      Berserk · Vinland Saga · Vagabond
-    </div>
-    ${QUOTES.map(q => `
-      <div class="wq">
-        <div class="wqt">"${q.t}"</div>
-        <div class="wqf">— ${q.f}</div>
+let _t;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_t);_t=setTimeout(()=>el.classList.remove('show'),1800);}
+
+let tab='home';
+function go(id){
+  tab=id;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(n=>n.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.querySelector('[data-tab="'+id+'"]').classList.add('on');
+  render();
+}
+function render(){({home:rHome,train:rTrain,eat:rEat,progress:rProg,wall:rWall})[tab]();}
+
+function rHome(){
+  const e=ent(),m=macros(),s=streak(),dn=Math.max(1,dayN());
+  const wk=wkKey(),wkd=WK[wk],q=QQ[(dn-1)%QQ.length];
+  const gs=glowScore(),cld=Object.values(e.cl).filter(Boolean).length;
+  const cl=[
+    {k:'am',l:'Skincare AM — wash · niacinamide · SPF 50'},
+    {k:'pm',l:'Skincare PM — wash · retinol · moisturiser'},
+    {k:'noliq',l:'Zero liquid calories'},
+    {k:'supps',l:'Supplements / protein powder'}
+  ];
+  document.getElementById('s-home').innerHTML=`
+    <div class="sh"><div class="sh-l">Ascend</div><div class="sh-r">Day ${dn} · ${fmtD(td())}</div></div>
+
+    <div class="panel a1">
+      <div class="plbl">Daily Glow Score</div>
+      <div class="ring-wrap">
+        <div class="ring-scene">
+          <div class="ring-speed"></div>
+          <div class="ring">${ring(gs)}<div class="ring-c"><div class="ring-num">${gs}</div><div class="ring-sub">/ 100</div></div></div>
+        </div>
       </div>
-    `).join('')}
-    <div style="padding:30px;text-align:center;font-size:7px;letter-spacing:5px;color:var(--muted)">― END OF CHAPTER ―</div>
+      <div class="ring-lbl">${glowLbl(gs)}</div>
+      <div class="ring-desc">${glowDesc(gs)}</div>
+    </div>
+
+    <div class="panel a2">
+      <div class="streak-wrap">
+        <div class="streak-n">${s}</div>
+        <div class="streak-r">
+          <div class="streak-mood">${smood(s)}</div>
+          <div class="streak-since">${s===1?'day streak':'days streak'} · since ${fmtD(START)}</div>
+          <span class="streak-unit">Consecutive</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="battle-tile a3" onclick="go('train')">
+      <div class="bt-type">Today's Battle</div>
+      <div class="bt-name">${wkd.name}</div>
+      <div class="bt-sub">${wkd.sub}</div>
+      <div class="bt-arr">${e.workout?'✓':'→'}</div>
+    </div>
+
+    <div class="panel a3">
+      <div class="plbl">Nutrition</div>
+      ${bar('Calories',m.cal,TGT.cal,' kcal')}
+      ${bar('Protein',m.pro,TGT.pro,'g')}
+    </div>
+
+    <div class="panel a3">
+      <div class="plbl">Quick Log</div>
+      <div class="mgrid">
+        ${MEALS.map(ml=>`<button class="mbtn${e.meals[ml.id]?' on':''}" onclick="togMeal(${ml.id})"><span class="mc">✓</span><span class="mn">${ml.name}</span><span class="mk">${ml.cal} kcal · ${ml.pro}g</span></button>`).join('')}
+      </div>
+    </div>
+
+    <div class="panel a4">
+      <div class="plbl">Movement</div>
+      ${bar('Steps',e.steps,TGT.steps,'')}
+      <div class="ctr">
+        <button class="cb" onclick="adj('steps',-500)">−500</button>
+        <button class="cb p" onclick="adj('steps',1000)">+1,000 Steps</button>
+        <button class="cb" onclick="adj('steps',500)">+500</button>
+      </div>
+    </div>
+
+    <div class="panel a4">
+      <div class="plbl">Hydration — skin glow</div>
+      ${bar('Water',e.water,TGT.water,' glasses')}
+      <div style="font-size:9px;color:rgba(255,255,255,.18);margin-top:4px">${(e.water*.25).toFixed(2)}L of 3L</div>
+      <div class="ctr">
+        <button class="cb" onclick="adj('water',-1)">−1</button>
+        <button class="cb p" onclick="adj('water',1)">+1 Glass</button>
+        <button class="cb" onclick="adj('water',2)">+2</button>
+      </div>
+    </div>
+
+    <div class="panel a4">
+      <div class="plbl">Sleep — dark circles · jaw definition</div>
+      ${bar('Sleep',e.sleep,TGT.sleep,'h')}
+      <div style="font-size:10px;margin-top:6px;color:${e.sleep>=7?'#4ade80':e.sleep>=5?'#c9a84c':'rgba(220,80,60,.7)'}">
+        ${e.sleep>=7?'✓ Face recovering. Dark circles fading.':e.sleep>=5?'⚠ Cortisol elevated. Facial puffiness up.':e.sleep>0?'✕ Sleep debt shows on your face directly.':'Log hours slept — biggest attractiveness lever.'}
+      </div>
+      <div class="ctr" style="margin-top:10px">
+        <button class="cb" onclick="adj('sleep',-.5)">−½h</button>
+        <button class="cb p" onclick="adj('sleep',.5)">+½ Hour</button>
+        <button class="cb" onclick="adj('sleep',1)">+1h</button>
+      </div>
+    </div>
+
+    <div class="panel a5">
+      <div class="plbl">Daily Checklist (${cld}/4)</div>
+      ${cl.map(ci=>`<div class="ci" onclick="togCl('${ci.k}')"><div class="cbox${e.cl[ci.k]?' on':''}"></div><span class="citem${e.cl[ci.k]?' struck':''}">${ci.l}</span></div>`).join('')}
+    </div>
+
+    <div class="qcard a5">
+      <div class="qmark">"</div>
+      <div class="qt">${q.t}</div>
+      <div class="qf">— ${q.f}</div>
+    </div>
+    <div style="height:10px"></div>
   `;
 }
 
-// ─── ACTIONS ─────────────────────────────────────────────────
-function togMeal(id) {
-  const e = entry();
-  e.meals[id] = !e.meals[id]; save(); render();
-  toast(e.meals[id] ? MEALS[id].name + ' LOGGED' : MEALS[id].name + ' REMOVED');
+function rTrain(){
+  const e=ent(),wk=wkKey(),wkd=WK[wk],dn=Math.max(1,dayN());
+  if(wk==='rest'){
+    document.getElementById('s-train').innerHTML=`
+      <div class="sh"><div class="sh-l">Train</div><div class="sh-r">Day ${dn}</div></div>
+      <div class="rblock"><div class="rbig">REST</div><div class="rsub">Walk · Recover · Sleep 7+ hours</div></div>
+      <div class="qcard" style="margin:0 14px"><div class="qmark">"</div><div class="qt">${QQ[dn%QQ.length].t}</div><div class="qf">— ${QQ[dn%QQ.length].f}</div></div>`;
+    return;
+  }
+  const tot=wkd.ex.reduce((s,ex)=>s+ex.s,0);
+  const don=wkd.ex.reduce((s,ex,i)=>s+Math.min(e.sets[wk+'_'+i]||0,ex.s),0);
+  const p=pct(don,tot);
+  document.getElementById('s-train').innerHTML=`
+    <div class="sh"><div class="sh-l">${wkd.name}</div><div class="sh-r">${wkd.sub}</div></div>
+    <div style="padding:14px 18px 4px">
+      <div class="srow" style="margin-bottom:8px"><span class="sname">Sets Done</span><span class="sval">${don}<em> / ${tot}</em></span></div>
+      <div class="bar" style="height:3px"><div class="bf${p>=100?' done':''}" style="width:${p}%"></div></div>
+    </div>
+    <div class="panel" style="margin-top:10px">
+      <div class="plbl">Exercises</div>
+      ${wkd.ex.map((ex,i)=>{
+        const d=e.sets[wk+'_'+i]||0;
+        return`<div class="ex"><div class="exh"><span class="exn">${ex.n}</span><span class="exs">${ex.s} × ${ex.r}</span></div>
+        <div class="srow2">${Array.from({length:ex.s},(_,j)=>`<button class="sd${j<d?' on':''}" onclick="togSet('${wk}',${i},${ex.s},${j})">${j<d?'✓':j+1}</button>`).join('')}</div></div>`;
+      }).join('')}
+    </div>
+    <div style="padding:14px">
+      <button class="btn${e.workout?' done':''}" onclick="togW()">${e.workout?'✓ Session Complete':'Mark Session Complete'}</button>
+    </div>`;
 }
 
-function togCl(k) {
-  const e = entry();
-  e.cl[k] = !e.cl[k]; save(); render();
+function rEat(){
+  const e=ent();let cal=0,pro=0;
+  e.meals.forEach((on,i)=>{if(on){cal+=MEALS[i].cal;pro+=MEALS[i].pro;}});
+  document.getElementById('s-eat').innerHTML=`
+    <div class="sh"><div class="sh-l">Nutrition</div><div class="sh-r">${cal} / ${TGT.cal} kcal</div></div>
+    <div style="height:12px"></div>
+    <div class="panel">
+      <div class="plbl">Today's Total</div>
+      ${bar('Calories',cal,TGT.cal,' kcal')}
+      ${bar('Protein',pro,TGT.pro,'g')}
+      <div style="font-size:10px;color:rgba(255,255,255,.18);margin-top:8px">
+        ${TGT.cal-cal>0?(TGT.cal-cal)+' kcal remaining':'✓ Calorie target reached'}
+        &nbsp;·&nbsp;
+        ${TGT.pro-pro>0?(TGT.pro-pro)+'g protein to go':'✓ Protein hit'}
+      </div>
+    </div>
+    <div class="panel">
+      <div class="plbl">Meals</div>
+      ${MEALS.map(m=>`
+        <div class="mrow" onclick="togMeal(${m.id})">
+          <div class="mchk${e.meals[m.id]?' on':''}"></div>
+          <div class="mi"><div class="mt">${m.name}</div><div class="md">${m.detail}</div></div>
+          <div class="mnr"><div class="mca">${m.cal}</div><div class="mpr">${m.pro}g</div></div>
+        </div>`).join('')}
+    </div>
+    <div class="panel">
+      <div class="plbl">Rules</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.25);line-height:2.5">
+        <div>✗ &nbsp;No packaged snacks</div>
+        <div>✗ &nbsp;No liquid calories</div>
+        <div>✓ &nbsp;Hungry between meals? Dahi or 30g peanuts</div>
+        <div>✓ &nbsp;Log everything on MyFitnessPal</div>
+      </div>
+    </div>
+    <div style="height:8px"></div>`;
 }
 
-function adj(field, n) {
-  const e = entry();
-  if (field === 'steps')  e.steps  = Math.max(0, Math.min(50000, e.steps + n));
-  if (field === 'water')  e.water  = Math.max(0, Math.min(24, e.water + n));
-  if (field === 'sleep')  e.sleep  = Math.max(0, Math.min(12, Math.round((e.sleep + n) * 2) / 2));
-  save(); render();
-  if (field === 'steps' && e.steps >= TGT.steps)  toast('10K STEPS — DONE');
-  if (field === 'water' && e.water >= TGT.water)  toast('HYDRATION TARGET HIT');
-  if (field === 'sleep' && e.sleep >= TGT.sleep)  toast('SLEEP GOAL REACHED');
+function rProg(){
+  const dn=Math.max(1,dayN()),lw=D.weights[D.weights.length-1]?.v??84;
+  const lws=D.waists.length?D.waists[D.waists.length-1].v:null;
+  const lost=(84-lw).toFixed(1),toGo=(lw-71).toFixed(1);
+  document.getElementById('s-progress').innerHTML=`
+    <div class="sh"><div class="sh-l">Body</div><div class="sh-r">Day ${dn} of 150</div></div>
+    <div style="height:12px"></div>
+    <div class="panel">
+      <div class="plbl">Weight — 84kg → 71kg</div>
+      <div class="tg">
+        <div class="tile"><div class="tv">${lw}<span style="font-size:11px">kg</span></div><div class="tl">Current</div></div>
+        <div class="tile"><div class="tv" style="color:${parseFloat(lost)>0?'#4ade80':'rgba(255,255,255,.3)'}">−${Math.abs(parseFloat(lost))}</div><div class="tl">Lost</div></div>
+        <div class="tile"><div class="tv">${toGo}</div><div class="tl">To Goal</div><div class="ts">71kg target</div></div>
+      </div>
+      ${wChart()}
+      <div class="inr"><input id="wi" type="number" placeholder="${lw}" step="0.1" min="40" max="200"><button onclick="logW()">Log</button></div>
+    </div>
+    <div class="panel">
+      <div class="plbl">Waist — belly fat tracker</div>
+      <div class="tg">
+        <div class="tile"><div class="tv">${lws?lws+'<span style="font-size:11px">cm</span>':'—'}</div><div class="tl">Current</div></div>
+        <div class="tile"><div class="tv" style="color:rgba(255,255,255,.2)">~90</div><div class="tl">Start</div></div>
+        <div class="tile"><div class="tv" style="color:rgba(255,255,255,.2)">~78</div><div class="tl">Target</div></div>
+      </div>
+      <div class="inr"><input id="wsi" type="number" placeholder="90" step="0.5" min="40" max="200"><button onclick="logWs()">Log</button></div>
+    </div>
+    <div class="panel">
+      <div class="plbl">Journey</div>
+      <div class="tg">
+        <div class="tile"><div class="tv">${dn}</div><div class="tl">Days In</div></div>
+        <div class="tile"><div class="tv">${Math.max(0,150-dn)}</div><div class="tl">Remaining</div></div>
+        <div class="tile"><div class="tv">${streak()}</div><div class="tl">Streak</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="plbl">What 71kg unlocks</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.28);line-height:2.5">
+        <div>→ Jawline and cheekbones visible</div>
+        <div>→ V-taper amplified with pull-up gains</div>
+        <div>→ Face 30–40% more defined at 12–14% BF</div>
+        <div>→ First abs visible under gym lights</div>
+        <div>→ Every piece of clothing fits differently</div>
+      </div>
+    </div>
+    <div style="height:8px"></div>`;
 }
 
-function togSet(wk, exIdx, maxSets, setIdx) {
-  const e = entry(), k = wk + '_' + exIdx, cur = e.sets[k] || 0;
-  e.sets[k] = setIdx < cur ? setIdx : setIdx + 1;
-  save(); rTrain();
+function rWall(){
+  const panels=QQ.map((q,i)=>{
+    const wide=q.t.length>75;
+    return`<div class="wq${wide?' wide':''}" style="animation:fadeUp .35s ease ${i*.04}s both">
+      <span class="wq-n">${String(i+1).padStart(2,'0')}</span>
+      <div class="wqt">"${q.t}"</div>
+      <span class="wqf">— ${q.f}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('s-wall').innerHTML=`
+    <div class="sh"><div class="sh-l">The Wall</div><div class="sh-r">Grimoire</div></div>
+    <div class="wall-intro">
+      <div class="wall-title">Words That Built Warriors.</div>
+      <div class="wall-sub">Berserk · Vinland Saga · Vagabond</div>
+    </div>
+    <div class="panels-grid">${panels}</div>
+    <div style="padding:32px;text-align:center;font-family:'Bebas Neue',cursive;font-size:9px;letter-spacing:6px;color:rgba(255,255,255,.06)">— END OF CHAPTER —</div>`;
 }
 
-function togWorkout() {
-  const e = entry(); e.workout = !e.workout; save(); render();
-  if (e.workout) toast('SESSION COMPLETE — WARRIOR');
+function togMeal(id){const e=ent();e.meals[id]=!e.meals[id];save();render();toast(e.meals[id]?MEALS[id].name+' logged':MEALS[id].name+' removed');}
+function togCl(k){const e=ent();e.cl[k]=!e.cl[k];save();render();}
+function adj(f,n){
+  const e=ent();
+  if(f==='steps')e.steps=Math.max(0,Math.min(50000,e.steps+n));
+  if(f==='water')e.water=Math.max(0,Math.min(24,e.water+n));
+  if(f==='sleep')e.sleep=Math.max(0,Math.min(12,Math.round((e.sleep+n)*2)/2));
+  save();render();
+  if(f==='steps'&&e.steps>=TGT.steps)toast('10k steps — done');
+  if(f==='water'&&e.water>=TGT.water)toast('Hydration complete');
+  if(f==='sleep'&&e.sleep>=TGT.sleep)toast('Sleep goal reached');
 }
+function togSet(wk,ei,ms,si){const e=ent(),k=wk+'_'+ei,c=e.sets[k]||0;e.sets[k]=si<c?si:si+1;save();rTrain();}
+function togW(){const e=ent();e.workout=!e.workout;save();render();if(e.workout)toast('Session complete');}
+function logW(){const v=parseFloat(document.getElementById('wi').value);if(!v||v<30||v>250){toast('Invalid');return;}D.weights.push({d:td(),v});save();toast('Weight: '+v+'kg');rProg();}
+function logWs(){const v=parseFloat(document.getElementById('wsi').value);if(!v||v<40||v>200){toast('Invalid');return;}D.waists.push({d:td(),v});save();toast('Waist: '+v+'cm');rProg();}
 
-function logW() {
-  const v = parseFloat(document.getElementById('wi').value);
-  if (!v || v < 30 || v > 250) { toast('INVALID ENTRY'); return; }
-  D.weights.push({ d: td(), v }); save();
-  toast('WEIGHT LOGGED: ' + v + 'kg'); rProgress();
-}
-
-function logWaist() {
-  const v = parseFloat(document.getElementById('waisti').value);
-  if (!v || v < 40 || v > 200) { toast('INVALID ENTRY'); return; }
-  D.waists.push({ d: td(), v }); save();
-  toast('WAIST LOGGED: ' + v + 'cm'); rProgress();
-}
-
-// ─── INIT ────────────────────────────────────────────────────
 load();
-document.getElementById('splash-day').textContent = Math.max(1, dayN());
-try { rHome(); } catch(err) { console.error('init error:', err); }
-setTimeout(() => document.getElementById('splash').classList.add('gone'), 1200);
+document.getElementById('sd').textContent=Math.max(1,dayN());
+try{rHome();}catch(err){console.error(err);}
+setTimeout(()=>document.getElementById('splash').classList.add('gone'),1400);
 </script>
 </body>
 </html>
