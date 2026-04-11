@@ -381,6 +381,49 @@ body::after{
   color:var(--gold);margin-top:12px;display:block;opacity:.75;
 }
 
+/* ── hero image banner ── */
+.hero{
+  width:100%;height:265px;
+  background-size:cover;background-position:center 25%;
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.hero-fade{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,
+    rgba(8,6,9,1) 0%,rgba(8,6,9,.78) 28%,
+    rgba(8,6,9,.18) 65%,transparent 100%
+  );
+}
+.hero-content{position:absolute;bottom:0;left:0;right:0;padding:22px 18px 20px}
+.hero-ey{font-family:'Bebas Neue',cursive;font-size:9px;letter-spacing:5px;color:rgba(201,168,76,.5);margin-bottom:5px}
+.hero-t{
+  font-family:'Bebas Neue',cursive;font-size:50px;letter-spacing:2px;line-height:.84;
+  background:var(--gg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-s{font-size:10px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-top:8px}
+
+/* ── character portrait on quote card ── */
+.q-portrait{
+  position:absolute;bottom:0;right:0;width:100px;height:155px;
+  background-size:cover;background-position:center top;
+  -webkit-mask-image:linear-gradient(to left,rgba(0,0,0,.3) 0%,transparent 72%);
+  mask-image:linear-gradient(to left,rgba(0,0,0,.3) 0%,transparent 72%);
+  pointer-events:none;
+}
+/* wall panel image bg */
+.wq.img-panel{position:relative;overflow:hidden}
+.wq-img-fade{position:absolute;inset:0;background:rgba(8,6,9,.76);pointer-events:none;z-index:0}
+.wq .wq-inner{position:relative;z-index:1}
+
+/* ── splash image overlay ── */
+.sp-img-fade{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(to top,
+    rgba(8,6,9,.97) 0%,rgba(8,6,9,.65) 35%,
+    rgba(8,6,9,.28) 65%,rgba(8,6,9,.1) 100%
+  );
+}
+
 /* ── nav ── */
 #nav{
   position:fixed;bottom:0;left:0;right:0;height:64px;
@@ -473,7 +516,7 @@ body::after{
 <div id="vignette"></div>
 
 <div id="splash">
-  <div class="sp-glow"></div>
+  <div class="sp-img-fade"></div>
   <div class="sp-lines"></div>
   <div style="text-align:center;position:relative;z-index:1">
     <span class="sp-eyebrow">The War Journal</span>
@@ -808,6 +851,41 @@ function wChart(){
   </svg>`;
 }
 
+// ── IMAGES ─────────────────────────────────────────────
+const IMG={
+  splash:    'musashi%20wallpaper%20%F0%9F%95%8A%EF%B8%8F.jpeg',
+  home:      'download%20(66).jpeg',           // Thorfinn boat golden sky
+  pushTrain: 'Colored%20Wallpaper.jpeg',        // Musashi praying at sunset
+  pullTrain: 'Vagabond%20colorful%20wallpaper%20%F0%9F%92%AE%F0%9F%92%AE.jpeg', // Musashi with sword
+  skillTrain:'musashi%20wallpaper%20%F0%9F%95%8A%EF%B8%8F.jpeg', // golden battlefield
+  walkTrain: 'Thorfinn%20(3).jpeg',             // forest walk
+  progress:  'download%20(68).jpeg',            // Guts reaching up
+  guts:      'download%20(67).jpeg',            // Guts at dusk
+  thorfinn:  'Thorfinn%20(3).jpeg',
+  musashi:   'Vagabond%20colorful%20wallpaper%20%F0%9F%92%AE%F0%9F%92%AE.jpeg',
+  toji:      'Toji%20(1).jpeg',
+};
+function trainImg(wk){
+  if(wk==='push'||wk==='pushskill')return IMG.pushTrain;
+  if(wk==='pull'||wk==='pullcore')return IMG.pullTrain;
+  return IMG.walkTrain;
+}
+function charImg(f){
+  if(f.includes('BERSERK'))return IMG.guts;
+  if(f.includes('VINLAND'))return IMG.thorfinn;
+  return IMG.musashi;
+}
+function hero(img,ey,title,sub){
+  return`<div class="hero" style="background-image:url('${img}')">
+    <div class="hero-fade"></div>
+    <div class="hero-content">
+      <div class="hero-ey">${ey}</div>
+      <div class="hero-t">${title}</div>
+      <div class="hero-s">${sub}</div>
+    </div>
+  </div>`;
+}
+
 let _t;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_t);_t=setTimeout(()=>el.classList.remove('show'),1800);}
 
@@ -833,7 +911,7 @@ function rHome(){
     {k:'supps',l:'Supplements / protein powder'}
   ];
   document.getElementById('s-home').innerHTML=`
-    <div class="sh"><div class="sh-l">Ascend</div><div class="sh-r">Day ${dn} · ${fmtD(td())}</div></div>
+    ${hero(IMG.home,'Project Ascend · Day '+dn,smood(s),fmtD(td()))}
 
     <div class="panel a1">
       <div class="plbl">Daily Glow Score</div>
@@ -918,8 +996,9 @@ function rHome(){
     </div>
 
     <div class="qcard a5">
+      <div class="q-portrait" style="background-image:url('${charImg(q.f)}')"></div>
       <div class="qmark">"</div>
-      <div class="qt">${q.t}</div>
+      <div class="qt" style="max-width:calc(100% - 70px)">${q.t}</div>
       <div class="qf">— ${q.f}</div>
     </div>
     <div style="height:10px"></div>
@@ -929,17 +1008,22 @@ function rHome(){
 function rTrain(){
   const e=ent(),wk=wkKey(),wkd=WK[wk],dn=Math.max(1,dayN());
   if(wk==='rest'){
+    const rq=QQ[dn%QQ.length];
     document.getElementById('s-train').innerHTML=`
-      <div class="sh"><div class="sh-l">Train</div><div class="sh-r">Day ${dn}</div></div>
-      <div class="rblock"><div class="rbig">REST</div><div class="rsub">Walk · Recover · Sleep 7+ hours</div></div>
-      <div class="qcard" style="margin:0 14px"><div class="qmark">"</div><div class="qt">${QQ[dn%QQ.length].t}</div><div class="qf">— ${QQ[dn%QQ.length].f}</div></div>`;
+      ${hero(IMG.walkTrain,'Rest Day · Day '+dn,'Rest.','Walk · Recover · Sleep 7+ hours')}
+      <div class="qcard" style="margin:10px 14px 0">
+        <div class="q-portrait" style="background-image:url('${charImg(rq.f)}')"></div>
+        <div class="qmark">"</div>
+        <div class="qt" style="max-width:calc(100% - 70px)">${rq.t}</div>
+        <div class="qf">— ${rq.f}</div>
+      </div>`;
     return;
   }
   const tot=wkd.ex.reduce((s,ex)=>s+ex.s,0);
   const don=wkd.ex.reduce((s,ex,i)=>s+Math.min(e.sets[wk+'_'+i]||0,ex.s),0);
   const p=pct(don,tot);
   document.getElementById('s-train').innerHTML=`
-    <div class="sh"><div class="sh-l">${wkd.name}</div><div class="sh-r">${wkd.sub}</div></div>
+    ${hero(trainImg(wk),'Day '+dn+' · '+wkd.name,wkd.name,wkd.sub)}
     <div style="padding:14px 18px 4px">
       <div class="srow" style="margin-bottom:8px"><span class="sname">Sets Done</span><span class="sval">${don}<em> / ${tot}</em></span></div>
       <div class="bar" style="height:3px"><div class="bf${p>=100?' done':''}" style="width:${p}%"></div></div>
@@ -1013,8 +1097,7 @@ function rProg(){
   const lws=D.waists.length?D.waists[D.waists.length-1].v:null;
   const lost=(84-lw).toFixed(1),toGo=(lw-71).toFixed(1);
   document.getElementById('s-progress').innerHTML=`
-    <div class="sh"><div class="sh-l">Body</div><div class="sh-r">Day ${dn} of 150</div></div>
-    <div style="height:12px"></div>
+    ${hero(IMG.progress,'Day '+dn+' of 150','The Body\nChanges.','84kg → 71kg · your transformation')}
     <div class="panel">
       <div class="plbl">Weight — 84kg → 71kg</div>
       <div class="tg">
@@ -1058,10 +1141,14 @@ function rProg(){
 function rWall(){
   const panels=QQ.map((q,i)=>{
     const wide=q.t.length>75;
-    return`<div class="wq${wide?' wide':''}" style="animation:fadeUp .35s ease ${i*.04}s both">
-      <span class="wq-n">${String(i+1).padStart(2,'0')}</span>
-      <div class="wqt">"${q.t}"</div>
-      <span class="wqf">— ${q.f}</span>
+    const bg=wide?`background-image:url('${charImg(q.f)}');background-size:cover;background-position:center top;`:'';
+    return`<div class="wq${wide?' wide img-panel':''}" style="animation:fadeUp .35s ease ${i*.04}s both;${bg}">
+      ${wide?'<div class="wq-img-fade"></div>':''}
+      <div class="wq-inner">
+        <span class="wq-n">${String(i+1).padStart(2,'0')}</span>
+        <div class="wqt">"${q.t}"</div>
+        <span class="wqf">— ${q.f}</span>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('s-wall').innerHTML=`
@@ -1100,6 +1187,8 @@ function logWs(){const v=parseFloat(document.getElementById('wsi').value);if(!v|
 
 load();
 document.getElementById('sd').textContent=Math.max(1,dayN());
+document.getElementById('splash').style.backgroundImage=`url('${IMG.splash}')`;
+document.getElementById('splash').style.cssText+=';background-size:cover;background-position:center 30%';
 try{rHome();}catch(err){console.error(err);}
 setTimeout(()=>document.getElementById('splash').classList.add('gone'),1400);
 </script>
