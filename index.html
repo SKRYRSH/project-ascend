@@ -300,6 +300,39 @@ body::after{
 .mca{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:1px}
 .mpr{font-size:9px;color:var(--t3);letter-spacing:1px;margin-top:2px}
 
+/* ── meal detail overlay ── */
+#meal-overlay{
+  position:fixed;inset:0;z-index:200;display:flex;align-items:flex-end;
+  background:rgba(0,0,0,0);pointer-events:none;transition:background .22s;
+}
+#meal-overlay.open{background:rgba(0,0,0,.72);pointer-events:all}
+#meal-sheet{
+  width:100%;background:rgb(10,8,14);border-top:1px solid rgba(201,168,76,.25);
+  border-radius:18px 18px 0 0;padding:0 0 80px;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.28,1);
+  max-height:88vh;overflow-y:auto;
+}
+#meal-overlay.open #meal-sheet{transform:translateY(0)}
+.msh-handle{width:36px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin:12px auto 0}
+.msh-head{padding:18px 20px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.msh-name{font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:4px;color:#fff}
+.msh-meta{font-size:10px;color:rgba(201,168,76,.7);letter-spacing:2px;margin-top:4px}
+.msh-items{padding:8px 20px}
+.msh-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.msh-item:last-child{border-bottom:none}
+.msh-iname{font-size:13px;font-weight:500;color:rgba(255,255,255,.85)}
+.msh-iqty{font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:1px;color:rgba(201,168,76,.9);text-align:right;max-width:55%}
+.msh-log{
+  margin:10px 20px 0;width:calc(100% - 40px);padding:16px;border-radius:3px;
+  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);
+  color:var(--gold);font-family:'Bebas Neue',cursive;font-size:15px;letter-spacing:4px;cursor:pointer;
+}
+.msh-log.done{background:rgba(201,168,76,.22);border-color:rgba(201,168,76,.7)}
+.msh-log.done::before{content:'✓  '}
+
 /* ── tiles grid ── */
 .tg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .tile{
@@ -749,10 +782,29 @@ const WK={
   rest:{name:'REST',sub:'Walk · Recover · Sleep',ex:[]}
 };
 const MEALS=[
-  {id:0,name:'BREAKFAST',detail:'4 boiled eggs · black chai · fruit',cal:330,pro:28},
-  {id:1,name:'LUNCH',detail:'Kala chana (200g) · 2 rotis · sabzi',cal:490,pro:26},
-  {id:2,name:'SNACK',detail:'200g plain dahi · handful kala chana',cal:230,pro:18},
-  {id:3,name:'DINNER',detail:'Eggs or chicken · rice or 2 rotis · dahi',cal:560,pro:40}
+  {id:0,name:'BREAKFAST',detail:'4 boiled eggs · black chai · fruit',cal:330,pro:28,items:[
+    {name:'Boiled Eggs',qty:'4 whole'},
+    {name:'Black Chai',qty:'1 cup — no sugar'},
+    {name:'Fruit',qty:'1 banana or 1 apple'},
+    {name:'Water',qty:'500 ml before eating'}
+  ]},
+  {id:1,name:'LUNCH',detail:'Kala chana (200g) · 2 rotis · sabzi',cal:490,pro:26,items:[
+    {name:'Kala Chana (cooked)',qty:'200 g'},
+    {name:'Whole Wheat Roti',qty:'2 rotis'},
+    {name:'Sabzi (any vegetable)',qty:'1 cup'},
+    {name:'Water',qty:'300 ml with meal'}
+  ]},
+  {id:2,name:'SNACK',detail:'200g plain dahi · handful kala chana',cal:230,pro:18,items:[
+    {name:'Plain Dahi (no sugar)',qty:'200 g'},
+    {name:'Kala Chana (boiled)',qty:'50 g'},
+    {name:'Water',qty:'300 ml'}
+  ]},
+  {id:3,name:'DINNER',detail:'Eggs or chicken · rice or 2 rotis · dahi',cal:560,pro:40,items:[
+    {name:'Boiled Eggs / Chicken',qty:'3 eggs  OR  150 g chicken'},
+    {name:'Rice / Roti',qty:'1 cup rice  OR  2 rotis'},
+    {name:'Plain Dahi',qty:'100 g'},
+    {name:'Water',qty:'300 ml with meal'}
+  ]}
 ];
 const QQ=[
   {t:"If you're always worried about crushing the ants beneath your feet... you couldn't walk. Could you?",f:"GUTS — BERSERK"},
@@ -967,7 +1019,7 @@ function rHome(){
     <div class="panel a3">
       <div class="plbl">Quick Log</div>
       <div class="mgrid">
-        ${MEALS.map(ml=>`<button class="mbtn${e.meals[ml.id]?' on':''}" onclick="togMeal(${ml.id})"><span class="mc">✓</span><span class="mn">${ml.name}</span><span class="mk">${ml.cal} kcal · ${ml.pro}g</span></button>`).join('')}
+        ${MEALS.map(ml=>`<button class="mbtn${e.meals[ml.id]?' on':''}" onclick="openMeal(${ml.id})"><span class="mc">✓</span><span class="mn">${ml.name}</span><span class="mk">${ml.cal} kcal · ${ml.pro}g</span></button>`).join('')}
       </div>
     </div>
 
@@ -1091,7 +1143,7 @@ function rEat(){
     <div class="panel">
       <div class="plbl">Meals</div>
       ${MEALS.map(m=>`
-        <div class="mrow" onclick="togMeal(${m.id})">
+        <div class="mrow" onclick="openMeal(${m.id})">
           <div class="mchk${e.meals[m.id]?' on':''}"></div>
           <div class="mi"><div class="mt">${m.name}</div><div class="md">${m.detail}</div></div>
           <div class="mnr"><div class="mca">${m.cal}</div><div class="mpr">${m.pro}g</div></div>
@@ -1180,6 +1232,23 @@ function rWall(){
 }
 
 function togMeal(id){const e=ent();e.meals[id]=!e.meals[id];save();render();toast(e.meals[id]?MEALS[id].name+' logged':MEALS[id].name+' removed');}
+function openMeal(id){
+  const m=MEALS[id],e=ent(),done=e.meals[id];
+  const ov=document.getElementById('meal-overlay');
+  document.getElementById('meal-sheet').innerHTML=`
+    <div class="msh-handle"></div>
+    <div class="msh-head">
+      <div class="msh-name">${m.name}</div>
+      <div class="msh-meta">${m.cal} KCAL &nbsp;·&nbsp; ${m.pro}G PROTEIN</div>
+    </div>
+    <div class="msh-items">
+      ${m.items.map(it=>`<div class="msh-item"><span class="msh-iname">${it.name}</span><span class="msh-iqty">${it.qty}</span></div>`).join('')}
+    </div>
+    <button class="msh-log${done?' done':''}" onclick="togMeal(${id});closeMeal()">${done?'Logged — tap to remove':'Log as Done'}</button>`;
+  ov.classList.add('open');
+}
+function closeMeal(){document.getElementById('meal-overlay').classList.remove('open');}
+
 function togCl(k){const e=ent();e.cl[k]=!e.cl[k];save();render();}
 function adj(f,n){
   const e=ent();
@@ -1210,5 +1279,8 @@ setBg('home');
 try{rHome();}catch(err){console.error(err);}
 setTimeout(()=>document.getElementById('splash').classList.add('gone'),1400);
 </script>
+<div id="meal-overlay" onclick="if(event.target===this)closeMeal()">
+  <div id="meal-sheet"></div>
+</div>
 </body>
 </html>
