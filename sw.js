@@ -1,4 +1,4 @@
-const CACHE = 'ascend-v7';
+const CACHE = 'ascend-v8';
 const SHELL = ['./','./index.html','./sw.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install', e => {
