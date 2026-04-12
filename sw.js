@@ -1,9 +1,9 @@
-const CACHE = 'ascend-v6';
+const CACHE = 'ascend-v7';
 const SHELL = ['./','./index.html','./sw.js','./manifest.json','./icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
-  // wait — don't skipWaiting automatically, let the banner prompt the user
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
