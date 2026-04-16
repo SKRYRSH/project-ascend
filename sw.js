@@ -1,4 +1,4 @@
-const CACHE = 'ascend-v9';
+const CACHE = 'ascend-v10';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
